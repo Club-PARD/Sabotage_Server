@@ -4,12 +4,14 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import club.pard.server.soonjji.sabotage.converter.PasswordEncryptConverter;
 import club.pard.server.soonjji.sabotage.entity.actionitem.ActionItem;
 import club.pard.server.soonjji.sabotage.entity.appusage.AppUsage;
 import club.pard.server.soonjji.sabotage.entity.ejection.Ejection;
 import club.pard.server.soonjji.sabotage.entity.thresholdgroup.ThresholdGroup;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,10 +26,11 @@ public class User {
     private Long id;
 
     @Column(unique = true, nullable = false)
-    private String deviceId;
-
-    @Column(unique = true, nullable = false)
     private String nickname;
+
+    @Convert(converter = PasswordEncryptConverter.class)
+    @Column(unique = true, nullable = false)
+    private String deviceId;
 
     Timestamp dateDeactivated;
 
