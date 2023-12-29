@@ -24,4 +24,9 @@ public class Ejection {
 
     @CreationTimestamp
     private Timestamp timeOccurred;
+
+    public Ejection(User user)
+    {
+        this.user = user;
+    }
 }
