@@ -1,4 +1,4 @@
-package club.pard.server.soonjji.sabotage.entity.thresholdgroup;
+package club.pard.server.soonjji.sabotage.entity.constraintgroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +15,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "threshold_group")
-public class ThresholdGroup {
+@Table(name = "constraint_group")
+public class ConstraintGroup {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

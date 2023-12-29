@@ -7,8 +7,8 @@ import java.util.List;
 import club.pard.server.soonjji.sabotage.converter.PasswordEncryptConverter;
 import club.pard.server.soonjji.sabotage.entity.actionitem.ActionItem;
 import club.pard.server.soonjji.sabotage.entity.appusage.AppUsage;
+import club.pard.server.soonjji.sabotage.entity.constraintgroup.ConstraintGroup;
 import club.pard.server.soonjji.sabotage.entity.ejection.Ejection;
-import club.pard.server.soonjji.sabotage.entity.thresholdgroup.ThresholdGroup;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -35,7 +35,7 @@ public class User {
     Timestamp dateDeactivated;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ThresholdGroup> thresholdGroups = new ArrayList<>();
+    private List<ConstraintGroup> constraintGroups = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AppUsage> appUsages = new ArrayList<>();
