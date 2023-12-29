@@ -7,8 +7,8 @@ import java.util.List;
 import club.pard.server.soonjji.sabotage.converter.PasswordEncryptConverter;
 import club.pard.server.soonjji.sabotage.entity.actionitem.ActionItem;
 import club.pard.server.soonjji.sabotage.entity.appusage.AppUsage;
-import club.pard.server.soonjji.sabotage.entity.goal.GoalGroup;
 import club.pard.server.soonjji.sabotage.entity.ejection.Ejection;
+import club.pard.server.soonjji.sabotage.entity.goalgroup.GoalGroup;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -18,7 +18,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.Data;
 
+@Data
 @Entity
 @Table(name = "user")
 public class User {

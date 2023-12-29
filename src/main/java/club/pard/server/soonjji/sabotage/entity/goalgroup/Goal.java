@@ -1,4 +1,4 @@
-package club.pard.server.soonjji.sabotage.entity.goal;
+package club.pard.server.soonjji.sabotage.entity.goalgroup;
 
 import club.pard.server.soonjji.sabotage.entity.user.User;
 import jakarta.persistence.Column;
@@ -9,7 +9,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Data;
+import lombok.Setter;
 
+@Data
 @Entity
 @Table(name = "goal")
 public class Goal {
@@ -25,13 +28,13 @@ public class Goal {
     @Column(nullable = false)
     private String appId;
 
-    private int timeBudget;
+    @Setter @Column(nullable = false)
+    private Long timeBudget;
 
-    public Goal(User user, GoalGroup group, String appId, int timeBudget)
+    public Goal(User user, GoalGroup group, String appId)
     {
         this.user = user;
         this.goalGroup = group;
         this.appId = appId;
-        this.timeBudget = timeBudget;
     }
 }
