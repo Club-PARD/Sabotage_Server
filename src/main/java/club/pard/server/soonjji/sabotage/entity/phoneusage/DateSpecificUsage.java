@@ -1,8 +1,6 @@
-package club.pard.server.soonjji.sabotage.entity.appusage;
+package club.pard.server.soonjji.sabotage.entity.phoneusage;
 
-import java.sql.Timestamp;
-
-import org.hibernate.annotations.CreationTimestamp;
+import java.sql.Date;
 
 import club.pard.server.soonjji.sabotage.entity.user.User;
 import jakarta.persistence.Column;
@@ -15,8 +13,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "app_usage")
-public class AppUsage {
+@Table(name = "date_specific_usage")
+public class DateSpecificUsage {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -24,10 +22,8 @@ public class AppUsage {
     private User user;
 
     @Column(nullable = false)
-    private String bundleId;
+    private Date date;
 
-    @CreationTimestamp
-    private Timestamp timeUploaded;
-
-    private int timeUsed;
+    @Column(nullable = false)
+    private Long secondsUsed;
 }
