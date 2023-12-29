@@ -19,6 +19,7 @@ public class UserService {
 
     public Response<User> register(String deviceId)
     {
+        System.out.println("Bruh");
         try
         {
             if(userRepository.existsByDeviceId(deviceId))
@@ -42,6 +43,7 @@ public class UserService {
         }
         catch(Exception e)
         {
+            e.printStackTrace();
             return Response.setFailure("Internal DB Error");
         }
     }

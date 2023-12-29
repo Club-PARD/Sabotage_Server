@@ -7,6 +7,7 @@ import club.pard.server.soonjji.sabotage.entity.user.User;
 import club.pard.server.soonjji.sabotage.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -17,8 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class UserController {
     private final UserService userService;
 
-    @PostMapping
-    public Response<User> register(String deviceId)
+    @PostMapping("/{deviceId}")
+    public Response<User> register(@PathVariable String deviceId)
     {
         return userService.register(deviceId);
     }

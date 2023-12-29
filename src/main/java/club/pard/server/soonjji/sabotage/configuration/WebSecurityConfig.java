@@ -29,8 +29,8 @@ public class WebSecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf((csrf) -> csrf.disable())
                 .httpBasic((httpBasic) -> httpBasic.disable())
-                .sessionManagement((sessionManagement) ->sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests.requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**")
+                // .sessionManagement((sessionManagement) ->sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests.requestMatchers("/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**")
                 .permitAll().anyRequest().authenticated());
 
         return httpSecurity.build();
