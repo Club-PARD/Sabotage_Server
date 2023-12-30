@@ -22,11 +22,11 @@ public class ActionItemService {
         String item = request.getContent();
 
         if(itemCategory == null || itemCategory.isEmpty())
-            return Response.setFailure("Category of action item cannot be null or empty");
+            return Response.setFailure("Action Item의 카테고리를 반드시 선택해야 합니다");
         if(item == null || item.isEmpty())
-            return Response.setFailure("Content of action item cannot be null or empty");
+            return Response.setFailure("Action Item의 내용이 비어 있을 수 없습니다");
         if(actionItemRepository.existsByCategoryAndContent(itemCategory, item))
-            return Response.setFailure("Same action item exists");
+            return Response.setFailure("같은 이름의 Action Item이 존재합니다");
         
         try
         {
