@@ -20,7 +20,7 @@ import club.pard.server.soonjji.sabotage.service.goalgroup.GoalGroupService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/goalGroup")
+@RequestMapping("/api/goalGroup")
 @RequiredArgsConstructor
 public class GoalGroupController {
     private final GoalGroupService goalGroupService;

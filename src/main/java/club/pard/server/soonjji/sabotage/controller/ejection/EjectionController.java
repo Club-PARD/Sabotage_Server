@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/ejection")
+@RequestMapping("/api/ejection")
 public class EjectionController {
     private final EjectionService ejectionService;
 

@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "actionItem", description = "Action Item 관련 API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/actionItem")
+@RequestMapping("/api/actionItem")
 public class ActionItemController {
     private final ActionItemService actionItemService;
 

@@ -7,7 +7,7 @@ import club.pard.server.soonjji.sabotage.service.phoneusage.PhoneUsageService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/phoneUsage")
+@RequestMapping("/api/phoneUsage")
 @RequiredArgsConstructor
 public class PhoneUsageController {
     private final PhoneUsageService appUsageService;
