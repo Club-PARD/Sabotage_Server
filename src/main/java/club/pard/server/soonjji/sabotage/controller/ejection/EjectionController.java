@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import club.pard.server.soonjji.sabotage.dto.Response.Response;
+import club.pard.server.soonjji.sabotage.dto.response.Response;
 import club.pard.server.soonjji.sabotage.service.ejection.EjectionService;
 import lombok.RequiredArgsConstructor;
 

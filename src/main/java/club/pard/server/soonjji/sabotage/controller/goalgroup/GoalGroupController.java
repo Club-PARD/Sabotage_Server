@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import club.pard.server.soonjji.sabotage.dto.Response.Response;
 import club.pard.server.soonjji.sabotage.dto.request.goalgroup.AddGoalGroupRequest;
 import club.pard.server.soonjji.sabotage.dto.request.goalgroup.RemoveGoalGroupRequest;
 import club.pard.server.soonjji.sabotage.dto.request.goalgroup.UpdateGoalGroupRequest;
+import club.pard.server.soonjji.sabotage.dto.response.Response;
 import club.pard.server.soonjji.sabotage.entity.goalgroup.GoalGroup;
 import club.pard.server.soonjji.sabotage.service.goalgroup.GoalGroupService;
 import lombok.RequiredArgsConstructor;

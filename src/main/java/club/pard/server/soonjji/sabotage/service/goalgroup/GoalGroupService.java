@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import club.pard.server.soonjji.sabotage.dto.Response.Response;
 import club.pard.server.soonjji.sabotage.dto.request.goalgroup.AddGoalGroupRequest;
 import club.pard.server.soonjji.sabotage.dto.request.goalgroup.RemoveGoalGroupRequest;
 import club.pard.server.soonjji.sabotage.dto.request.goalgroup.UpdateGoalGroupRequest;
+import club.pard.server.soonjji.sabotage.dto.response.Response;
 import club.pard.server.soonjji.sabotage.entity.goalgroup.Goal;
 import club.pard.server.soonjji.sabotage.entity.goalgroup.GoalGroup;
 import club.pard.server.soonjji.sabotage.entity.user.User;
@@ -31,11 +31,11 @@ public class GoalGroupService {
         Long timeBudget = request.getTimeBudget();
 
         if(user == null)
-            return Response.setFailure("User not existent");
+            return Response.setFailure("User not existent", "");
         if(groupTitle == null || groupTitle.isEmpty())
-            return Response.setFailure("Group is empty or null");
+            return Response.setFailure("Group is empty or null", "");
         if(apps == null) // can be empty.
-            return Response.setFailure("Apps list can be empty but cannot be null");
+            return Response.setFailure("Apps list can be empty but cannot be null", "");
         
         try
         {
@@ -50,11 +50,12 @@ public class GoalGroupService {
                 goalRepository.save(newGoal);
             }
 
-            return Response.setSuccess("Successfully added goal group and its goals", newGroup);
+            return Response.setSuccess("Successfully added goal group and its goals", "", newGroup);
         }
         catch(Exception e)
         {
-            return Response.setFailure("Internal DB Error");
+            e.printStackTrace();
+            return Response.setFailure("서버에 오류가 생겼어요!", "GoalGroup/add: Internal Server Error");
         }
     }
 
@@ -63,14 +64,14 @@ public class GoalGroupService {
         User user = userRepository.findById(userId).orElse(null);
 
         if(user == null)
-            return Response.setFailure("User not existent");
+            return Response.setFailure("User not existent", "");
         
         List<GoalGroup> goalGroups = goalGroupRepository.findAllByUserId(userId);
 
         if(goalGroups == null)
-            return Response.setFailure("Failed to retrieve goal group");
+            return Response.setFailure("Failed to retrieve goal group", "");
         
-        return Response.setSuccess("Successfully retrieved goal group", goalGroups);
+        return Response.setSuccess("Successfully retrieved goal group", "", goalGroups);
     }
 
     public Response<GoalGroup> updateGoalGroup(UpdateGoalGroupRequest request)
@@ -85,18 +86,18 @@ public class GoalGroupService {
         GoalGroup targetGoalGroup = goalGroupRepository.findById(targetGoalGroupId).orElse(null);
 
         if(targetUser == null)
-            return Response.setFailure("User not existent");
+            return Response.setFailure("User not existent", "");
         if(targetGoalGroup == null)
-            return Response.setFailure("Goal group not existent");
+            return Response.setFailure("Goal group not existent", "");
         if(targetGoalGroup.getUser().getId() != targetUserId)
-            return Response.setFailure("User does not own the goal group");
+            return Response.setFailure("User does not own the goal group", "");
 
         if(newTitle == null || newTitle.isEmpty())
-            return Response.setFailure("Goal group title cannot be null or empty");
+            return Response.setFailure("Goal group title cannot be null or empty", "");
         if(newApps == null)
-            return Response.setFailure("Apps list can be empty but should not be null");
+            return Response.setFailure("Apps list can be empty but should not be null", "");
         if(newTimeBudget == null || newTimeBudget < 0)
-            return Response.setFailure("Time budget cannot be null or negative");
+            return Response.setFailure("Time budget cannot be null or negative", "");
 
         try
         {
@@ -110,11 +111,12 @@ public class GoalGroupService {
                 targetGoalGroup.addGoal(newGoal);
             }
     
-            return Response.setSuccess("Successfully updated goal group", targetGoalGroup);
+            return Response.setSuccess("Successfully updated goal group", "", targetGoalGroup);
         }
         catch(Exception e)
         {
-            return Response.setFailure("Internal DB Error");
+            e.printStackTrace();
+            return Response.setFailure("서버에 오류가 생겼어요!", "Internal DB Error");
         }
     }
 
@@ -124,27 +126,28 @@ public class GoalGroupService {
         Long targetGoalGroupId = request.getGoalGroupId();
 
         if(targetUserId == null)
-            return Response.setFailure("User ID should not be null");
+            return Response.setFailure("User ID should not be null", "");
         if(targetGoalGroupId == null)
-            return Response.setFailure("Goal Group ID should not be null");
+            return Response.setFailure("Goal Group ID should not be null", "");
         if(!userRepository.existsById(targetUserId))
-            return Response.setFailure("User not existent with given ID");
+            return Response.setFailure("User not existent with given ID", "");
 
         GoalGroup targetGoalGroup = goalGroupRepository.findById(targetGoalGroupId).orElse(null);
         if(targetGoalGroup == null)
-            return Response.setFailure("Goal Group with given ID does not exist");
+            return Response.setFailure("Goal Group with given ID does not exist", "");
         
         if(targetGoalGroup.getUser().getId() != targetUserId)
-            return Response.setFailure("User does not own the target goal group");
+            return Response.setFailure("User does not own the target goal group", "");
 
         try
         {
             goalGroupRepository.delete(targetGoalGroup);
-            return Response.setSuccess("Successfully removed target goal group", null);
+            return Response.setSuccess("Successfully removed target goal group", "", null);
         }
         catch(Exception e)
         {
-            return Response.setFailure("Internal DB Error");
+            e.printStackTrace();
+            return Response.setFailure("서버에 오류가 생겼어요!", "Internal DB Error");
         }
     }
 }
