@@ -4,6 +4,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,30 +25,33 @@ public class EjectionService {
     private final UserRepository userRepository;
 
     @Transactional
-    public Response<?> add(Long userId)
+    public ResponseEntity<Response<?>> add(Long userId)
     {
         try
         {
             User targetUser = userRepository.findById(userId).orElse(null);
             if(targetUser == null)
-                return Response.setFailure("해당 사용자가 존재하지 않아요!", "Ejection/add: Target User not existent");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Response.setFailure("해당 사용자가 존재하지 않아요!", "Ejection/add: Target User not existent"));
            
             
             Ejection newEjection = new Ejection();
             ejectionRepository.save(newEjection);
             targetUser.addEjection(newEjection);
 
-            return Response.setSuccess("탈출 추가 완료!", "Ejection/add: Successful", null);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(Response.setSuccess("탈출 추가 완료!", "Ejection/add: Successful", null));
         }
         catch(Exception e)
         {
             e.printStackTrace();
-            return Response.setFailure("서버에 오류가 생겼어요!", "Ejection/add: Internal Server Error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Response.setFailure("서버에 오류가 생겼어요!", "Ejection/add: Internal Server Error"));
         }
     }
 
     @Transactional(readOnly = true)
-    public Response<List<EjectionRankResponse>> getRank(Timestamp targetTimestamp)
+    public ResponseEntity<Response<List<EjectionRankResponse>>> getRank(Timestamp targetTimestamp)
     {
         try
         {
@@ -59,31 +64,36 @@ public class EjectionService {
                 Long EjectionRank = each.getEjectionCount();
                 rank.add(new EjectionRankResponse(nickname, EjectionRank));
             }
-            return Response.setSuccess("탈출 순위표 조회 완료!", "Ejection/getRank: Successful", rank);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(Response.setSuccess("탈출 순위표 조회 완료!", "Ejection/getRank: Successful", rank));
         }
         catch(Exception e)
         {
             e.printStackTrace();
-            return Response.setFailure("서버에 오류가 생겼어요!", "Ejection/getRank: Internal Server Error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Response.setFailure("서버에 오류가 생겼어요!", "Ejection/getRank: Internal Server Error"));
         }
     }
 
     @Transactional
-    public Response<Long> getTodays(Long userId, Timestamp targetTimestamp)
+    public ResponseEntity<Response<Long>> getTodays(Long userId, Timestamp targetTimestamp)
     {
         try
         {
             if(!userRepository.existsById(userId))
-                return Response.setFailure("해당 사용자가 존재하지 않아요!", "Ejection/getTodays: Target User not existent");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Response.setFailure("해당 사용자가 존재하지 않아요!", "Ejection/getTodays: Target User not existent"));
             // List<Ejection> ejections = ejectionRepository.findAllByUserIdAndTimeOccurredGreaterThanEqual(userId, targetTimestamp);
             Long ejections = ejectionRepository.countByUserIdAndTimeOccurredGreaterThanEqual(userId, targetTimestamp);
     
-            return Response.setSuccess("탈출 목록 조회 완료!", "Ejection/getTodays: Successful", ejections);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(Response.setSuccess("탈출 목록 조회 완료!", "Ejection/getTodays: Successful", ejections));
         }
         catch(Exception e)
         {
             e.printStackTrace();
-            return Response.setFailure("서버에 오류가 생겼어요!", "Ejection/getTodays: Internal Server Error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Response.setFailure("서버에 오류가 생겼어요!", "Ejection/getTodays: Internal Server Error"));
         }
     }
 }

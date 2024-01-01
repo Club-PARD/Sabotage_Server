@@ -3,6 +3,8 @@ package club.pard.server.soonjji.sabotage.service.goalgroup;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +28,7 @@ public class GoalGroupService {
     private final UserRepository userRepository;
 
     @Transactional
-    public Response<GoalGroupSimplifiedResponse> add(Long userId, AddGoalGroupRequest request)
+    public ResponseEntity<Response<GoalGroupSimplifiedResponse>> add(Long userId, AddGoalGroupRequest request)
     {
         try
         {
@@ -36,11 +38,14 @@ public class GoalGroupService {
             Long timeBudget = request.getTimeBudget();
     
             if(targetUser == null)
-                return Response.setFailure("해당 사용자가 존재하지 않아요!", "GoalGroup/add: Target User not existent");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Response.setFailure("해당 사용자가 존재하지 않아요!", "GoalGroup/add: Target User not existent"));
             if(groupTitle == null || groupTitle.isEmpty())
-                return Response.setFailure("그룹 이름이 비어 있어요!", "GoalGroup/add: Goal Group title is empty or null");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Response.setFailure("그룹 이름이 비어 있어요!", "GoalGroup/add: Goal Group title is empty or null"));
             if(apps == null) // can be empty.
-                return Response.setFailure("그룹에 속하는 어플리케이션 리스트가 없어요!", "GoalGroup/add: Apps list can be empty but cannot be null");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Response.setFailure("그룹에 속하는 어플리케이션 리스트가 없어요!", "GoalGroup/add: Apps list can be empty but cannot be null"));
 
             GoalGroup newGoalGroup = GoalGroup.builder().title(groupTitle).timeBudget(timeBudget).build();
             targetUser.addGoalGroup(newGoalGroup);
@@ -54,17 +59,19 @@ public class GoalGroupService {
                 goalRepository.save(newGoal);
             }
 
-            return Response.setSuccess("그룹과 목표 추가 완료!", "GoalGroup/add: Successful", GoalGroupSimplifiedResponse.from(newGoalGroup));
+            return ResponseEntity.status(HttpStatus.OK)
+                .body(Response.setSuccess("그룹과 목표 추가 완료!", "GoalGroup/add: Successful", GoalGroupSimplifiedResponse.from(newGoalGroup)));
         }
         catch(Exception e)
         {
             e.printStackTrace();
-            return Response.setFailure("서버에 오류가 생겼어요!", "GoalGroup/add: Internal Server Error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Response.setFailure("서버에 오류가 생겼어요!", "GoalGroup/add: Internal Server Error"));
         }
     }
 
     @Transactional(readOnly = true)
-    public Response<List<GoalGroupSimplifiedResponse>> list(Long userId)
+    public ResponseEntity<Response<List<GoalGroupSimplifiedResponse>>> list(Long userId)
     {
         try
         {
@@ -72,25 +79,29 @@ public class GoalGroupService {
             List<GoalGroup> goalGroups = goalGroupRepository.findAllByUserId(userId);
 
             if(user == null)
-                return Response.setFailure("해당 사용자가 존재하지 않아요!", "GoalGroup/list: Target User not existent");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Response.setFailure("해당 사용자가 존재하지 않아요!", "GoalGroup/list: Target User not existent"));
             if(goalGroups == null)
-                return Response.setFailure("해당 사용자의 목표 그룹 리스트가 존재하지 않아요!", "GoalGroup/list: Goal Group list from target User is null");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Response.setFailure("해당 사용자의 목표 그룹 리스트가 존재하지 않아요!", "GoalGroup/list: Goal Group list from target User is null"));
             
             List<GoalGroupSimplifiedResponse> goalGroupsSimplified = new ArrayList<>();
             for(GoalGroup goalGroup: goalGroups)
                 goalGroupsSimplified.add(GoalGroupSimplifiedResponse.from(goalGroup));
 
-            return Response.setSuccess("목표 그룹 조회 완료!", "GoalGroup/list: Successful", goalGroupsSimplified);
+            return ResponseEntity.status(HttpStatus.OK)
+                .body(Response.setSuccess("목표 그룹 조회 완료!", "GoalGroup/list: Successful", goalGroupsSimplified));
         }
         catch(Exception e)
         {
             e.printStackTrace();
-            return Response.setFailure("서버에 오류가 생겼어요!", "GoalGroup/list: Internal Server Error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Response.setFailure("서버에 오류가 생겼어요!", "GoalGroup/list: Internal Server Error"));
         }
     }
 
     @Transactional
-    public Response<GoalGroupSimplifiedResponse> update(Long userId, Long goalGroupId, UpdateGoalGroupRequest request)
+    public ResponseEntity<Response<GoalGroupSimplifiedResponse>> update(Long userId, Long goalGroupId, UpdateGoalGroupRequest request)
     {
         try
         {
@@ -102,18 +113,24 @@ public class GoalGroupService {
             GoalGroup targetGoalGroup = goalGroupRepository.findById(goalGroupId).orElse(null);
     
             if(targetUser == null)
-                return Response.setFailure("해당 사용자가 존재하지 않아요!", "GoalGroup/update: Target User not existent");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Response.setFailure("해당 사용자가 존재하지 않아요!", "GoalGroup/update: Target User not existent"));
             if(targetGoalGroup == null)
-                return Response.setFailure("해당 목표 그룹이 존재하지 않아요!", "GoalGroup/update: Target Goal Group not existent");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Response.setFailure("해당 목표 그룹이 존재하지 않아요!", "GoalGroup/update: Target Goal Group not existent"));
             if(targetGoalGroup.getUser().getId() != userId)
-                return Response.setFailure("해당 사용자가 해당 목표 그룹을 소유하지 않아요!", "GoalGroup/update: Target User does not own target Goal Group");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Response.setFailure("해당 사용자가 해당 목표 그룹을 소유하지 않아요!", "GoalGroup/update: Target User does not own target Goal Group"));
     
             if(newTitle == null || newTitle.isEmpty())
-                return Response.setFailure("그룹 이름이 비어 있어요!", "GoalGroup/update: Goal Group title is null or empty");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Response.setFailure("그룹 이름이 비어 있어요!", "GoalGroup/update: Goal Group title is null or empty"));
             if(newApps == null)
-                return Response.setFailure("그룹에 속하는 어플리케이션 리스트가 없어요!", "GoalGroup/update: Apps list can be empty but should not be null");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Response.setFailure("그룹에 속하는 어플리케이션 리스트가 없어요!", "GoalGroup/update: Apps list can be empty but should not be null"));
             if(newTimeBudget == null || newTimeBudget < 0)
-                return Response.setFailure("목표 시간은 존재하지 않거나 음수일 수 없어요!", "GoalGroup/update: Time budget cannot be null or negative");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Response.setFailure("목표 시간은 존재하지 않거나 음수일 수 없어요!", "GoalGroup/update: Time budget cannot be null or negative"));
 
             targetGoalGroup.setTitle(newTitle);
             targetGoalGroup.setTimeBudget(newTimeBudget);
@@ -125,17 +142,19 @@ public class GoalGroupService {
                 targetGoalGroup.addGoal(newGoal);
             }
     
-            return Response.setSuccess("목표 그룹 수정 완료!", "GoalGroup/update: Successful", GoalGroupSimplifiedResponse.from(targetGoalGroup));
+            return ResponseEntity.status(HttpStatus.OK)
+                .body(Response.setSuccess("목표 그룹 수정 완료!", "GoalGroup/update: Successful", GoalGroupSimplifiedResponse.from(targetGoalGroup)));
         }
         catch(Exception e)
         {
             e.printStackTrace();
-            return Response.setFailure("서버에 오류가 생겼어요!", "GoalGroup/update: Internal Server Error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Response.setFailure("서버에 오류가 생겼어요!", "GoalGroup/update: Internal Server Error"));
         }
     }
 
     @Transactional
-    public Response<?> remove(Long userId, Long goalGroupId)
+    public ResponseEntity<Response<?>> remove(Long userId, Long goalGroupId)
     {
         try
         {
@@ -143,22 +162,27 @@ public class GoalGroupService {
             GoalGroup targetGoalGroup = goalGroupRepository.findById(goalGroupId).orElse(null);
     
             if(targetUser == null)
-                return Response.setFailure("해당 사용자가 존재하지 않아요!","GoalGroup/remove: Target User not existent");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Response.setFailure("해당 사용자가 존재하지 않아요!","GoalGroup/remove: Target User not existent"));
             if(targetGoalGroup == null)
-                return Response.setFailure("해당 목표 그룹이 존재하지 않아요!", "GoalGroup/remove: Target Goal Group not existent");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Response.setFailure("해당 목표 그룹이 존재하지 않아요!", "GoalGroup/remove: Target Goal Group not existent"));
             
             if(targetGoalGroup.getUser().getId() != userId)
-                return Response.setFailure("해당 사용자가 해당 목표 그룹을 소유하지 않아요!", "GoalGroup/remove: Target User does not own target Goal Group");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Response.setFailure("해당 사용자가 해당 목표 그룹을 소유하지 않아요!", "GoalGroup/remove: Target User does not own target Goal Group"));
     
             targetGoalGroup.getGoals().clear();
             targetUser.removeGoalGroup(targetGoalGroup);
 
-            return Response.setSuccess("목표 그룹 삭제 완료!", "GoalGroup/remove: Successful", null);
+            return ResponseEntity.status(HttpStatus.OK)
+                .body(Response.setSuccess("목표 그룹 삭제 완료!", "GoalGroup/remove: Successful", null));
         }
         catch(Exception e)
         {
             e.printStackTrace();
-            return Response.setFailure("서버에 오류가 생겼어요!", "Internal DB Error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Response.setFailure("서버에 오류가 생겼어요!", "Internal DB Error"));
         }
     }
 }

@@ -2,6 +2,7 @@ package club.pard.server.soonjji.sabotage.controller.actionitem;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -37,31 +38,31 @@ public class ActionItemController {
         @ApiResponse(responseCode = "500", description = "Action Item 추가 실패, 예외 처리로 발생한 상황이므로 서버 관리자가 추적해야 함")
     })
     @PostMapping("/{userId}")
-    public Response<ActionItemSimplifiedResponse> add(@PathVariable Long userId, @RequestBody @Valid AddActionItemRequest request)
+    public ResponseEntity<Response<ActionItemSimplifiedResponse>> add(@PathVariable Long userId, @RequestBody @Valid AddActionItemRequest request)
     {
         return actionItemService.add(userId, request);
     }
 
     @GetMapping("/{userId}/all")
-    public Response<List<ActionItemSimplifiedResponse>> list(@PathVariable Long userId)
+    public ResponseEntity<Response<List<ActionItemSimplifiedResponse>>> list(@PathVariable Long userId)
     {
         return actionItemService.list(userId);
     }
 
     @PatchMapping("/expose/{userId}")
-    public Response<ActionItemSimplifiedResponse> expose(@PathVariable Long userId)
+    public ResponseEntity<Response<ActionItemSimplifiedResponse>> expose(@PathVariable Long userId)
     {
         return actionItemService.expose(userId);
     }
 
     @PatchMapping("/{userId}/{itemId}")
-    public Response<ActionItemSimplifiedResponse> update(@PathVariable Long userId, @PathVariable Long itemId, @RequestBody UpdateActionItemRequest request)
+    public ResponseEntity<Response<ActionItemSimplifiedResponse>> update(@PathVariable Long userId, @PathVariable Long itemId, @RequestBody UpdateActionItemRequest request)
     {
         return actionItemService.update(userId, itemId, request);
     }
 
     @DeleteMapping("/{userId}/{itemId}")
-    public Response<?> remove(@PathVariable Long userId, @PathVariable Long itemId)
+    public ResponseEntity<Response<?>> remove(@PathVariable Long userId, @PathVariable Long itemId)
     {
         return actionItemService.remove(userId, itemId);
     }

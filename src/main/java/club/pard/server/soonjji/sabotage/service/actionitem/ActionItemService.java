@@ -3,6 +3,8 @@ package club.pard.server.soonjji.sabotage.service.actionitem;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,89 +25,104 @@ public class ActionItemService {
     private final UserRepository userRepository;
 
     @Transactional
-    public Response<ActionItemSimplifiedResponse> add(Long userId, AddActionItemRequest request)
+    public ResponseEntity<Response<ActionItemSimplifiedResponse>> add(Long userId, AddActionItemRequest request)
     {
         try
         {
             User targetUser = userRepository.findById(userId).orElse(null);
             if(targetUser == null)
-                return Response.setFailure("해당 사용자가 존재하지 않아요!", "ActionItem/add: Target User not existent");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Response.setFailure("해당 사용자가 존재하지 않아요!", "ActionItem/add: Target User not existent"));
 
             String itemCategory = request.getCategory();
             String item = request.getContent();
 
             if(itemCategory == null || itemCategory.isEmpty())
-                return Response.setFailure("Action Item의 카테고리가 존재하지 않거나 비어있어요!", "ActionItem/add: Action Item has category null or empty");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Response.setFailure("Action Item의 카테고리가 존재하지 않거나 비어있어요!", "ActionItem/add: Action Item has category null or empty"));
             if(item == null || item.isEmpty())
-                return Response.setFailure("Action Item의 내용이 비어있어요!", "ActionItem/add: Action Item has name null or empty");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Response.setFailure("Action Item의 내용이 비어있어요!", "ActionItem/add: Action Item has name null or empty"));
             if(actionItemRepository.existsByUserIdAndCategoryAndContent(userId, itemCategory, item))
-                return Response.setFailure("같은 이름의 Action Item이 이미 있어요!", "ActionItem/add: Action item already exists with the same name and category");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Response.setFailure("같은 이름의 Action Item이 이미 있어요!", "ActionItem/add: Action item already exists with the same name and category"));
 
             ActionItem newActionItem = ActionItem.builder().category(itemCategory).content(item).build();
             targetUser.addActionItem(newActionItem);
             actionItemRepository.save(newActionItem);
 
-            return Response.setSuccess("Action Item 추가 완료!", "ActionItem/add: Successful", ActionItemSimplifiedResponse.from(newActionItem));
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(Response.setSuccess("Action Item 추가 완료!", "ActionItem/add: Successful", ActionItemSimplifiedResponse.from(newActionItem)));
         }
         catch(Exception e)
         {
             e.printStackTrace();
-            return Response.setFailure("서버 내부에 오류가 생겼어요!", "ActionItem/add: Internal Server Error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Response.setFailure("서버 내부에 오류가 생겼어요!", "ActionItem/add: Internal Server Error"));
         }
     }
 
     @Transactional(readOnly = true)
-    public Response<List<ActionItemSimplifiedResponse>> list(Long userId)
+    public ResponseEntity<Response<List<ActionItemSimplifiedResponse>>> list(Long userId)
     {
         try
         {
             User targetUser = userRepository.findById(userId).orElse(null);
             if(targetUser == null)
-                return Response.setFailure("사용자가 존재하지 않아요!", "ActionItem/list: Target User does not exist");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Response.setFailure("사용자가 존재하지 않아요!", "ActionItem/list: Target User does not exist"));
             
             List<ActionItem> items = actionItemRepository.findAllByUserIdOrderByIdAsc(userId);
-            if(items == null) return Response.setFailure("Action Item 리스트가 존재하지 않아요!", "ActionItem/list: Action Item list is null");
+            if(items == null)
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Response.setFailure("Action Item 리스트가 존재하지 않아요!", "ActionItem/list: Action Item list is null"));
             
             List<ActionItemSimplifiedResponse> itemsSimplified = new ArrayList<>();
             items.forEach((item) -> {
                 itemsSimplified.add(ActionItemSimplifiedResponse.from(item));
             });
 
-            return Response.setSuccess("Action Item 목록 조회 완료!", "ActionItem/list: Successful", itemsSimplified);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(Response.setSuccess("Action Item 목록 조회 완료!", "ActionItem/list: Successful", itemsSimplified));
         }
         catch(Exception e)
         {
             e.printStackTrace();
-            return Response.setFailure("서버 내부에 오류가 생겼어요!", "ActionItem/list: Internal Server Error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Response.setFailure("서버 내부에 오류가 생겼어요!", "ActionItem/list: Internal Server Error"));
         }
     }
 
     @Transactional
-    public Response<ActionItemSimplifiedResponse> expose(Long userId)
+    public ResponseEntity<Response<ActionItemSimplifiedResponse>> expose(Long userId)
     {
         try
         {
             // User targetUser = userRepository.findById(userId).orElse(null);
             if(!userRepository.existsById(userId))
-                return Response.setFailure("사용자가 존재하지 않아요!", "ActionItem/expose: Target User does not exist");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Response.setFailure("사용자가 존재하지 않아요!", "ActionItem/expose: Target User does not exist"));
 
             // ActionItem targetActionItem = actionItemRepository.findLeastExposedActionItemByUser(userId);
             ActionItem targetActionItem = actionItemRepository.findFirst1ByUserIdOrderByExposureCountAsc(userId);
             if(targetActionItem == null)
-                return Response.setFailure("Action Item 리스트가 존재하지 않아요!", "ActionItem/expose: Action Item list is null"); // Expected NOT to be stuck here when the list is empty(not null)
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Response.setFailure("Action Item이 존재하지 않아요!", "ActionItem/expose: Action Item is null")); // Expected NOT to be stuck here when the list is empty(not null)
             
             targetActionItem.setExposureCount(targetActionItem.getExposureCount() + 1);
-            return Response.setSuccess("Action Item 가져오기 완료!", "ActionItem/expose: successful", ActionItemSimplifiedResponse.from(targetActionItem));
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(Response.setSuccess("Action Item 가져오기 완료!", "ActionItem/expose: successful", ActionItemSimplifiedResponse.from(targetActionItem)));
         }
         catch(Exception e)
         {
             e.printStackTrace();
-            return Response.setFailure("서버 내부에 오류가 생겼어요!", "ActionItem/expose: Internal Server Error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Response.setFailure("서버 내부에 오류가 생겼어요!", "ActionItem/expose: Internal Server Error"));
         }
     }
 
     @Transactional
-    public Response<ActionItemSimplifiedResponse> update(Long userId, Long itemId, UpdateActionItemRequest request)
+    public ResponseEntity<Response<ActionItemSimplifiedResponse>> update(Long userId, Long itemId, UpdateActionItemRequest request)
     {   
         try
         {
@@ -113,33 +130,39 @@ public class ActionItemService {
             ActionItem targetActionItem = actionItemRepository.findById(itemId).orElse(null);
 
             if(targetUser == null)
-                return Response.setFailure("해당 사용자가 존재하지 않아요!", "ActionItem/update: Target User not existent");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Response.setFailure("해당 사용자가 존재하지 않아요!", "ActionItem/update: Target User not existent"));
             if(targetActionItem == null)
-                return Response.setFailure("해당 Action Item이 존재하지 않아요!", "ActionItem/update: Target Action Item not existent");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Response.setFailure("해당 Action Item이 존재하지 않아요!", "ActionItem/update: Target Action Item not existent"));
             if(targetActionItem.getUser().getId() != userId)
-                return Response.setFailure("해당 사용자가 해당 Action Item을 소유하지 않아요!", "ActionItem/update: Target Action Item not owned by target User");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Response.setFailure("해당 사용자가 해당 Action Item을 소유하지 않아요!", "ActionItem/update: Target Action Item not owned by target User"));
 
 
             String newCategory = request.getCategory();
             String newContent = request.getContent();
 
             if(actionItemRepository.existsByUserIdAndCategoryAndContent(userId, newCategory, newContent))
-                return Response.setFailure("같은 카테고리에 같은 이름으로 되어 있는 Action Item이 이미 있어요!", "ActionItem/update: Action Item already existent with same category and content");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Response.setFailure("같은 카테고리에 같은 이름으로 되어 있는 Action Item이 이미 있어요!", "ActionItem/update: Action Item already existent with same category and content"));
 
             targetActionItem.setCategory(newCategory);
             targetActionItem.setContent(newContent);
 
-            return Response.setSuccess("Action Item 수정 완료!", "ActionItem/update: successful", ActionItemSimplifiedResponse.from(targetActionItem));
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(Response.setSuccess("Action Item 수정 완료!", "ActionItem/update: successful", ActionItemSimplifiedResponse.from(targetActionItem)));
         }
         catch(Exception e)
         {
             e.printStackTrace();
-            return Response.setFailure("서버 내부에 오류가 생겼어요!", "ActionItem/update: Internal Server Error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Response.setFailure("서버 내부에 오류가 생겼어요!", "ActionItem/update: Internal Server Error"));
         }
     }
 
     @Transactional
-    public Response<?> remove(Long userId, Long itemId)
+    public ResponseEntity<Response<?>> remove(Long userId, Long itemId)
     {
         try
         {
@@ -147,19 +170,24 @@ public class ActionItemService {
             ActionItem targetActionItem = actionItemRepository.findById(itemId).orElse(null);
 
             if(targetUser == null)
-                return Response.setFailure("해당 사용자가 존재하지 않아요!", "ActionItem/remove: Target User not existent");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Response.setFailure("해당 사용자가 존재하지 않아요!", "ActionItem/remove: Target User not existent"));
             if(targetActionItem == null)
-                return Response.setFailure("해당 Action Item이 존재하지 않아요!", "ActionItem/remove: Target Action Item not existent");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Response.setFailure("해당 Action Item이 존재하지 않아요!", "ActionItem/remove: Target Action Item not existent"));
             if(targetActionItem.getUser().getId() != targetUser.getId())
-                return Response.setFailure("해당 사용자가 해당 Action Item을 소유하지 않아요!", "ActionItem/remove: Target Action Item not owned by target User");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Response.setFailure("해당 사용자가 해당 Action Item을 소유하지 않아요!", "ActionItem/remove: Target Action Item not owned by target User"));
 
             targetUser.removeActionItem(targetActionItem);
-            return Response.setSuccess("Action Item 삭제 완료!", "ActionItem/remove: successful", null);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(Response.setSuccess("Action Item 삭제 완료!", "ActionItem/remove: successful", null));
         }
         catch(Exception e)
         {
             e.printStackTrace();
-            return Response.setFailure("서버 내부에 오류가 생겼어요!", "ActionItem/remove: Internal Server Error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Response.setFailure("서버 내부에 오류가 생겼어요!", "ActionItem/remove: Internal Server Error"));
         }
     }
 }

@@ -9,6 +9,7 @@ import club.pard.server.soonjji.sabotage.service.user.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,13 +24,13 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public Response<UserSimplifiedResponse> add(@RequestBody @Valid final AddUserRequest request)
+    public ResponseEntity<Response<UserSimplifiedResponse>> add(@RequestBody @Valid final AddUserRequest request)
     {
         return userService.add(request);
     }
 
     @GetMapping("/{userId}")
-    public Response<UserSimplifiedResponse> list(@PathVariable Long userId)
+    public ResponseEntity<Response<UserSimplifiedResponse>> list(@PathVariable Long userId)
     {
         return userService.list(userId);
     }

@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,20 +24,20 @@ public class EjectionController {
     private final EjectionService ejectionService;
 
     @PostMapping("/{userId}")
-    public Response<?> add(@PathVariable Long userId)
+    public ResponseEntity<Response<?>> add(@PathVariable Long userId)
     {
         return ejectionService.add(userId);
     }
 
     @GetMapping("/{userId}/today")
-    public Response<Long> getTodays(@PathVariable Long userId)
+    public ResponseEntity<Response<Long>> getTodays(@PathVariable Long userId)
     {
         Timestamp startOfToday = Timestamp.valueOf(LocalDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate().atStartOfDay());
         return ejectionService.getTodays(userId, startOfToday);
     }
 
     @GetMapping("/rank")
-    public Response<List<EjectionRankResponse>> getRank()
+    public ResponseEntity<Response<List<EjectionRankResponse>>> getRank()
     {
         Timestamp startOfToday = Timestamp.valueOf(LocalDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate().atStartOfDay());
         return ejectionService.getRank(startOfToday);

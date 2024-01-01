@@ -2,6 +2,7 @@ package club.pard.server.soonjji.sabotage.controller.goalgroup;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -25,25 +26,25 @@ public class GoalGroupController {
     private final GoalGroupService goalGroupService;
 
     @PostMapping("/{userId}")
-    public Response<GoalGroupSimplifiedResponse> add(@PathVariable Long userId, @RequestBody AddGoalGroupRequest request)
+    public ResponseEntity<Response<GoalGroupSimplifiedResponse>> add(@PathVariable Long userId, @RequestBody AddGoalGroupRequest request)
     {
         return goalGroupService.add(userId, request);
     }
 
     @GetMapping("/{userId}")
-    public Response<List<GoalGroupSimplifiedResponse>> list(@PathVariable Long userId)
+    public ResponseEntity<Response<List<GoalGroupSimplifiedResponse>>> list(@PathVariable Long userId)
     {
         return goalGroupService.list(userId);
     }
 
     @PatchMapping("/{userId}/{goalGroupId}")
-    public Response<GoalGroupSimplifiedResponse> update(@PathVariable Long userId, @PathVariable Long goalGroupId, @RequestBody UpdateGoalGroupRequest request)
+    public ResponseEntity<Response<GoalGroupSimplifiedResponse>> update(@PathVariable Long userId, @PathVariable Long goalGroupId, @RequestBody UpdateGoalGroupRequest request)
     {
         return goalGroupService.update(userId, goalGroupId, request);
     }
 
     @DeleteMapping("/{userId}/{goalGroupId}")
-    public Response<?> remove(@PathVariable Long userId, @PathVariable Long goalGroupId)
+    public ResponseEntity<Response<?>> remove(@PathVariable Long userId, @PathVariable Long goalGroupId)
     {
         return goalGroupService.remove(userId, goalGroupId);
     }

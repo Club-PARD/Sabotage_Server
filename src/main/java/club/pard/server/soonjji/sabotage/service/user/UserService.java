@@ -3,6 +3,8 @@ package club.pard.server.soonjji.sabotage.service.user;
 import java.sql.Timestamp;
 import java.util.Random;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,13 +24,14 @@ public class UserService {
     private static final String[] nouns = new String[]{"곰", "두루미", "고양이", "강아지", "거위", "얼룩말", "돌고래", "알파카", "다람쥐", "앵무새", "너구리", "호랑이"};
 
     @Transactional
-    public Response<UserSimplifiedResponse> add(AddUserRequest request)
+    public ResponseEntity<Response<UserSimplifiedResponse>> add(AddUserRequest request)
     {
         try
         {
             String deviceId = request.getDeviceId();
             if(userRepository.existsByDeviceId(deviceId))
-                return Response.setFailure("해당 기기로 등록된 사용자가 이미 있어요!", "User/register: deviceId exists");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Response.setFailure("해당 기기로 등록된 사용자가 이미 있어요!", "User/register: deviceId exists"));
 
             Random rng = new Random();
             String newNickname;
@@ -45,51 +48,59 @@ public class UserService {
             User newUser = User.builder().deviceId(deviceId).nickname(newNickname).build();
             userRepository.save(newUser);
 
-            return Response.setSuccess("사용자 등록 완료!", "User/register: new User added", UserSimplifiedResponse.from(newUser));
+            return ResponseEntity.status(HttpStatus.OK)
+                .body(Response.setSuccess("사용자 등록 완료!", "User/register: new User added", UserSimplifiedResponse.from(newUser)));
         }
         catch(Exception e)
         {
             e.printStackTrace();
-            return Response.setFailure("서버에 오류가 생겼어요!", "User/register: Internal Server Error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Response.setFailure("서버에 오류가 생겼어요!", "User/register: Internal Server Error"));
         }
     }
 
     @Transactional(readOnly = true)
-    public Response<UserSimplifiedResponse> list(Long userId)
+    public ResponseEntity<Response<UserSimplifiedResponse>> list(Long userId)
     {
         try
         {
             User targetUser = userRepository.findById(userId).orElse(null);
             if(targetUser == null)
-                return Response.setFailure("해당 사용자가 존재하지 않아요!", "User/list: Target User not existent");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Response.setFailure("해당 사용자가 존재하지 않아요!", "User/list: Target User not existent"));
             
-            return Response.setSuccess("사용자 조회 완료!", "User/list: successful", UserSimplifiedResponse.from(targetUser));
+            return ResponseEntity.status(HttpStatus.OK)
+                .body(Response.setSuccess("사용자 조회 완료!", "User/list: successful", UserSimplifiedResponse.from(targetUser)));
         }
         catch(Exception e)
         {
             e.printStackTrace();
-            return Response.setFailure("서버에 오류가 생겼어요!", "User/list: Internal Server Error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Response.setFailure("서버에 오류가 생겼어요!", "User/list: Internal Server Error"));
         }
     }
 
     @Transactional
-    public Response<Timestamp> deactivate(Long userId)
+    public ResponseEntity<Response<Timestamp>> deactivate(Long userId)
     {
         try
         {   
             User targetUser = userRepository.findById(userId).orElse(null);
             if(targetUser == null)
-                return Response.setFailure("해당 ID를 가지는 사용자가 없어요!", "User/deactivate: User not existent with given ID");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Response.setFailure("해당 ID를 가지는 사용자가 없어요!", "User/deactivate: User not existent with given ID"));
 
             Timestamp timeDeactivated = new Timestamp(System.currentTimeMillis());
             targetUser.setDateDeactivated(timeDeactivated);
 
-            return Response.setSuccess("비활성화 완료!", "User/deactivate: User deactivation time set", timeDeactivated);
+            return ResponseEntity.status(HttpStatus.OK)
+                .body(Response.setSuccess("비활성화 완료!", "User/deactivate: User deactivation time set", timeDeactivated));
         }
         catch(Exception e)
         {
             e.printStackTrace();
-            return Response.setFailure("서버에 오류가 생겼어요!", "User/deactivate: Internal Server Error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Response.setFailure("서버에 오류가 생겼어요!", "User/deactivate: Internal Server Error"));
         }
     }
 }
