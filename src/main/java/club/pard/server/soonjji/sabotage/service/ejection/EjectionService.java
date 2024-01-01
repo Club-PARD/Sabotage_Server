@@ -1,14 +1,17 @@
 package club.pard.server.soonjji.sabotage.service.ejection;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import club.pard.server.soonjji.sabotage.dto.response.Response;
+import club.pard.server.soonjji.sabotage.dto.response.ejection.EjectionRankResponse;
 import club.pard.server.soonjji.sabotage.entity.ejection.Ejection;
 import club.pard.server.soonjji.sabotage.entity.user.User;
+import club.pard.server.soonjji.sabotage.repository.ejection.EjectionRank;
 import club.pard.server.soonjji.sabotage.repository.ejection.EjectionRepository;
 import club.pard.server.soonjji.sabotage.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +42,29 @@ public class EjectionService {
         {
             e.printStackTrace();
             return Response.setFailure("서버에 오류가 생겼어요!", "Ejection/add: Internal Server Error");
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public Response<List<EjectionRankResponse>> getRank(Timestamp targetTimestamp)
+    {
+        try
+        {
+            List<EjectionRank> rankRaw = ejectionRepository.getRank(targetTimestamp);
+
+            List<EjectionRankResponse> rank = new ArrayList<>();
+            for(EjectionRank each: rankRaw)
+            {
+                String nickname = userRepository.findById(each.getUserId()).get().getNickname();
+                Long EjectionRank = each.getEjectionCount();
+                rank.add(new EjectionRankResponse(nickname, EjectionRank));
+            }
+            return Response.setSuccess("탈출 순위표 조회 완료!", "Ejection/getRank: Successful", rank);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+            return Response.setFailure("서버에 오류가 생겼어요!", "Ejection/getRank: Internal Server Error");
         }
     }
 
