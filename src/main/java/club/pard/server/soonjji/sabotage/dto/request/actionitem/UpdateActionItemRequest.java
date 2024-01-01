@@ -1,13 +1,14 @@
 package club.pard.server.soonjji.sabotage.dto.request.actionitem;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@RequiredArgsConstructor
 public class UpdateActionItemRequest {
+    @NotBlank(message = "Category should not be null or empty")
     private String category;
+    @NotBlank(message = "Content should not be null or empty")
     private String content;
 }

@@ -14,30 +14,38 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-@Data
 @Entity
 @Table(name = "goal_group")
+@Getter
+@ToString
+@NoArgsConstructor
 public class GoalGroup {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne @JoinColumn(name = "user_id")
+    @Setter @ManyToOne @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(nullable = false)
+    @Setter @Column(nullable = false)
     private String title;
 
-    @OneToMany(mappedBy = "goalGroup", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Setter @OneToMany(mappedBy = "goalGroup", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Goal> goals = new ArrayList<>();
 
-    @Column(nullable = false)
+    @Setter @Column(nullable = false)
     private Long timeBudget;
 
-    public GoalGroup(User user, String title, Long timeBudget)
+
+    @Builder
+    public GoalGroup(String title, Long timeBudget)
     {
-        this.user = user;
         this.title = title;
         this.timeBudget = timeBudget;
     }
@@ -45,6 +53,7 @@ public class GoalGroup {
     public void addGoal(Goal goal)
     {
         this.goals.add(goal);
+        goal.setUser(this.getUser());
         goal.setGoalGroup(this);
         goal.setTimeBudget(this.timeBudget);
     }

@@ -9,20 +9,26 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.Data;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
-@Data
 @Entity
 @Table(name = "goal")
+@Getter
+@ToString
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Goal {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne @JoinColumn(name = "user_id")
+    @Setter @ManyToOne @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne @JoinColumn(name = "goal_group_id")
+    @Setter @ManyToOne @JoinColumn(name = "goal_group_id")
     private GoalGroup goalGroup;
 
     @Column(nullable = false)
@@ -31,10 +37,10 @@ public class Goal {
     @Setter @Column(nullable = false)
     private Long timeBudget;
 
-    public Goal(User user, GoalGroup group, String appId)
+    @Builder
+    public Goal(String appId, Long timeBudget)
     {
-        this.user = user;
-        this.goalGroup = group;
         this.appId = appId;
+        this.timeBudget = timeBudget;
     }
 }

@@ -12,10 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import club.pard.server.soonjji.sabotage.dto.request.goalgroup.AddGoalGroupRequest;
-import club.pard.server.soonjji.sabotage.dto.request.goalgroup.RemoveGoalGroupRequest;
 import club.pard.server.soonjji.sabotage.dto.request.goalgroup.UpdateGoalGroupRequest;
 import club.pard.server.soonjji.sabotage.dto.response.Response;
-import club.pard.server.soonjji.sabotage.entity.goalgroup.GoalGroup;
+import club.pard.server.soonjji.sabotage.dto.response.goalgroup.GoalGroupSimplifiedResponse;
 import club.pard.server.soonjji.sabotage.service.goalgroup.GoalGroupService;
 import lombok.RequiredArgsConstructor;
 
@@ -25,27 +24,27 @@ import lombok.RequiredArgsConstructor;
 public class GoalGroupController {
     private final GoalGroupService goalGroupService;
 
-    @PostMapping
-    public Response<GoalGroup> addGoalGroup(@RequestBody AddGoalGroupRequest request)
+    @PostMapping("/{userId}")
+    public Response<GoalGroupSimplifiedResponse> add(@PathVariable Long userId, @RequestBody AddGoalGroupRequest request)
     {
-        return goalGroupService.addGoalGroup(request);
+        return goalGroupService.add(userId, request);
     }
 
     @GetMapping("/{userId}")
-    public Response<List<GoalGroup>> getGoalGroups(@PathVariable Long userId)
+    public Response<List<GoalGroupSimplifiedResponse>> list(@PathVariable Long userId)
     {
-        return goalGroupService.getGoalGroups(userId);
+        return goalGroupService.list(userId);
     }
 
-    @PatchMapping
-    public Response<GoalGroup> updateGoalGroup(@RequestBody UpdateGoalGroupRequest request)
+    @PatchMapping("/{userId}/{goalGroupId}")
+    public Response<GoalGroupSimplifiedResponse> update(@PathVariable Long userId, @PathVariable Long goalGroupId, @RequestBody UpdateGoalGroupRequest request)
     {
-        return goalGroupService.updateGoalGroup(request);
+        return goalGroupService.update(userId, goalGroupId, request);
     }
 
-    @DeleteMapping
-    public Response<?> removeGoalGroup(@RequestBody RemoveGoalGroupRequest request)
+    @DeleteMapping("/{userId}/{goalGroupId}")
+    public Response<?> remove(@PathVariable Long userId, @PathVariable Long goalGroupId)
     {
-        return goalGroupService.removeGoalGroup(request);
+        return goalGroupService.remove(userId, goalGroupId);
     }
 }

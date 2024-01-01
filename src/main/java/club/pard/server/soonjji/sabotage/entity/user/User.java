@@ -18,11 +18,17 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-@Data
 @Entity
 @Table(name = "user")
+@Getter
+@ToString
+@NoArgsConstructor
 public class User {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,6 +40,7 @@ public class User {
     @Column(unique = true, nullable = false)
     private String deviceId;
 
+    @Setter
     Timestamp dateDeactivated;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -48,9 +55,21 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ActionItem> actionItems = new ArrayList<>();
 
+    @Builder
     public User(String deviceId, String nickname)
     {
         this.deviceId = deviceId;
         this.nickname = nickname;
     }
+
+    public void addGoalGroup(GoalGroup goalGroup){ this.goalGroups.add(goalGroup); goalGroup.setUser(this); }
+    public void removeGoalGroup(GoalGroup goalGroup){ this.goalGroups.remove(goalGroup); goalGroup.setUser(null); }
+
+    // public void addGoal(Goal goal){ this.goals.add(goal); goal.setUser(this); }
+
+    public void addActionItem(ActionItem actionItem){ this.actionItems.add(actionItem); actionItem.setUser(this); }
+    public void removeActionItem(ActionItem actionItem){ this.actionItems.remove(actionItem); actionItem.setUser(null); }
+
+    public void addEjection(Ejection ejection){ this.ejections.add(ejection); ejection.setUser(this); }
+    public void removeEjection(Ejection ejection){ this.ejections.remove(ejection); ejection.setUser(null); }
 }

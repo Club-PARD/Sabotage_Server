@@ -21,15 +21,15 @@ public class EjectionController {
     private final EjectionService ejectionService;
 
     @PostMapping("/{userId}")
-    public Response<?> addEjection(@PathVariable Long userId)
+    public Response<?> add(@PathVariable Long userId)
     {
-        return ejectionService.addEjection(userId);
+        return ejectionService.add(userId);
     }
 
-    @GetMapping("/{userId}")
-    public Response<Integer> getEjectionsFrom(@PathVariable Long userId)
+    @GetMapping("/{userId}/today")
+    public Response<Long> getTodays(@PathVariable Long userId)
     {
         Timestamp startOfToday = Timestamp.valueOf(LocalDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate().atStartOfDay());
-        return ejectionService.getEjectionsCount(startOfToday);
+        return ejectionService.getTodays(userId, startOfToday);
     }
 }
