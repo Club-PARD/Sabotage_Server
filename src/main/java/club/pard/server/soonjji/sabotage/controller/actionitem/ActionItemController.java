@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import club.pard.server.soonjji.sabotage.dto.Response.Response;
 import club.pard.server.soonjji.sabotage.dto.request.actionitem.AddActionItemRequest;
 import club.pard.server.soonjji.sabotage.dto.request.actionitem.UpdateActionItemRequest;
+import club.pard.server.soonjji.sabotage.dto.response.Response;
 import club.pard.server.soonjji.sabotage.entity.actionitem.ActionItem;
 import club.pard.server.soonjji.sabotage.service.actionitem.ActionItemService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,6 +21,7 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Tag(name = "actionItem", description = "Action Item 관련 API")
@@ -37,7 +38,7 @@ public class ActionItemController {
         @ApiResponse(responseCode = "500", description = "Action Item 추가 실패, 예외 처리로 발생한 상황이므로 서버 관리자가 추적해야 함")
     })
     @PostMapping
-    public Response<ActionItem> addActionItem(@RequestBody AddActionItemRequest request)
+    public Response<ActionItem> addActionItem(@RequestBody @Valid AddActionItemRequest request)
     {
         return actionItemService.addActionItem(request);
     }

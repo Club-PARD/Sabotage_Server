@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import club.pard.server.soonjji.sabotage.dto.Response.Response;
+import club.pard.server.soonjji.sabotage.dto.response.Response;
 import club.pard.server.soonjji.sabotage.entity.ejection.Ejection;
 import club.pard.server.soonjji.sabotage.entity.user.User;
 import club.pard.server.soonjji.sabotage.repository.ejection.EjectionRepository;
@@ -24,17 +24,17 @@ public class EjectionService {
         {
             User owner = userRepository.findById(userId).orElse(null);
             if(owner == null)
-                return Response.setFailure("Invalid user ID");
+                return Response.setFailure("Invalid user ID", "");
            
             
             Ejection newEjection = new Ejection(owner);
             ejectionRepository.save(newEjection);
 
-            return Response.setSuccess("Successfully added ejection", null);
+            return Response.setSuccess("Successfully added ejection", "", null);
         }
         catch(Exception e)
         {
-            return Response.setFailure("Internal DB Error");
+            return Response.setFailure("Internal DB Error", "");
         }
     }
 
@@ -44,11 +44,11 @@ public class EjectionService {
         {
             List<Ejection> ejections = ejectionRepository.findAllEjectionsFrom(targetTimestamp);
     
-            return Response.setSuccess("Successfully retrieved ejections list", ejections.size());
+            return Response.setSuccess("Successfully retrieved ejections list", "", ejections.size());
         }
         catch(Exception e)
         {
-            return Response.setFailure("Internal DB Error");
+            return Response.setFailure("Internal DB Error", "");
         }
     }
 }

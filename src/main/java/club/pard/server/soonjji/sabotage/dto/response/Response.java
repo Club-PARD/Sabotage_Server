@@ -1,4 +1,4 @@
-package club.pard.server.soonjji.sabotage.dto.Response;
+package club.pard.server.soonjji.sabotage.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
