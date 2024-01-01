@@ -10,5 +10,5 @@ public class UserSimplifiedResponse {
     private final Long id;
     private final String nickname;
 
-    public UserSimplifiedResponse(User user){ this.id = user.getId(); this.nickname = user.getNickname(); }
+    public static UserSimplifiedResponse from(User user){ return new UserSimplifiedResponse(user.getId(), user.getNickname()); }
 }
