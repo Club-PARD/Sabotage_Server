@@ -24,14 +24,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "actionItem", description = "Action Item 관련 API")
+@Tag(name = "ActionItem", description = "Action Item 관련 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/actionItem")
 public class ActionItemController {
     private final ActionItemService actionItemService;
 
-    @Operation(summary = "ActionItem/add: Action Item 추가 시 사용하는 함수", description = "userId를 URL 안에 Path Variable로써 정수 형태로, Action Item의 카테고리와 이름을 각각 Body로써 문자열 형태로 입력받는다.")
+    @Operation(summary = "ActionItem/add: Action Item 추가 시 사용하는 API Call", description = "userId를 URL 안에 Path Variable로써 정수 형태로, Action Item의 카테고리와 이름을 각각 Body로써 문자열 형태로 입력받는다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "OK: Action Item이 정상적으로 추가됨을 의미함"),
         @ApiResponse(responseCode = "400", description = "Bad Request: Action Item 추가 시 카테고리나 내용이 비어 있거나 전송되지 않은 경우, 혹은 같은 카테고리/이름으로 된 Action Item이 존재할 경우 발생함"),
@@ -44,7 +44,7 @@ public class ActionItemController {
         return actionItemService.add(userId, request);
     }
 
-    @Operation(summary = "ActionItem/list: 특정 사용자의 Action Item 목록 조회 시 사용하는 함수", description = "userId를 URL 안에 Path Variable로써 정수 형태로 입력받는다. Body로 받는 내용은 없다.")
+    @Operation(summary = "ActionItem/list: 특정 사용자의 Action Item 목록 조회 시 사용하는 API Call", description = "userId를 URL 안에 Path Variable로써 정수 형태로 입력받는다. Body로 받는 내용은 없다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "OK: 특정 사용자의 Action Item을 성공적으로 가져왔음을 의미함"),
         @ApiResponse(responseCode = "404", description = "Not Found: Path Variable로 명시한 User가 존재하지 않거나 User 안에 Action Item 리스트가 (비어있는 게 아니라 아예) 존재하지 않을 경우 발생함"),
@@ -56,7 +56,7 @@ public class ActionItemController {
         return actionItemService.list(userId);
     }
 
-    @Operation(summary = "ActionItem/expose: 배너에 특정 사용자의 Action Item을 노출시킬 때 사용하는 함수", description = "userId를 URL 안에 Path Variable로써 정수 형태로 입력받는다. Body로 받는 내용은 없다.")
+    @Operation(summary = "ActionItem/expose: 배너에 특정 사용자의 Action Item을 노출시킬 때 사용하는 API Call", description = "userId를 URL 안에 Path Variable로써 정수 형태로 입력받는다. Body로 받는 내용은 없다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "OK: Action Item 하나를 정상적으로 뽑아옴을 의미함"),
         @ApiResponse(responseCode = "404", description = "Not Found: Path Variable로 명시한 User가 존재하지 않거나 User 안에 Action Item 리스트가 (비어있는 게 아니라 아예) 존재하지 않을 경우 발생함"),
@@ -68,7 +68,7 @@ public class ActionItemController {
         return actionItemService.expose(userId);
     }
 
-    @Operation(summary = "ActionItem/update: Action Item 수정 시 사용하는 함수", description = "userId와 itemId를 URL 안에 Path Variable로써 정수 형태로, 바꾸게 될 새 Action Item의 카테고리와 이름을 Body에 문자열로 입력받는다.")
+    @Operation(summary = "ActionItem/update: Action Item 수정 시 사용하는 API Call", description = "userId와 itemId를 URL 안에 Path Variable로써 정수 형태로, 바꾸게 될 새 Action Item의 카테고리와 이름을 Body에 문자열로 입력받는다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "OK: Action Item이 정상적으로 수정됨을 의미함"),
         @ApiResponse(responseCode = "400", description = "Bad Request: Action Item 수정 시 카테고리나 내용이 비어 있거나 전송되지 않은 경우, 혹은 이미 같은 카테고리/이름으로 된 Action Item이 존재할 경우 발생함"),
@@ -82,7 +82,7 @@ public class ActionItemController {
         return actionItemService.update(userId, itemId, request);
     }
 
-    @Operation(summary = "ActionItem/remove: Action Item 삭제 시 사용하는 함수", description = "userId와 itemId를 URL 안에 Path Variable로써 정수 형태로 입력받는다. Body로 받는 내용은 없다.")
+    @Operation(summary = "ActionItem/remove: Action Item 삭제 시 사용하는 API Call", description = "userId와 itemId를 URL 안에 Path Variable로써 정수 형태로 입력받는다. Body로 받는 내용은 없다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "OK: Action Item이 정상적으로 삭제됨을 의미함"),
         @ApiResponse(responseCode = "403", description = "Forbidden: Path Variable로 명시한 User가 Action Item을 소유하지 않을 경우 발생함"),

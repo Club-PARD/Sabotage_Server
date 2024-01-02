@@ -9,6 +9,7 @@ import club.pard.server.soonjji.sabotage.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -19,14 +20,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-
+@Tag(name = "User", description = "사용자 관련 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
 public class UserController {
     private final UserService userService;
 
-    @Operation(summary = "User/add: 사용자를 추가할 경우 사용하는 함수", description = "사용자의 device ID를 Body에 문자열 형태로 입력받는다.")
+    @Operation(summary = "User/add: 사용자를 추가할 경우 사용하는 API Call", description = "사용자의 device ID를 Body에 문자열 형태로 입력받는다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "OK: 사용자가 정상적으로 추가됨을 의미함"),
         @ApiResponse(responseCode = "400", description = "Bad Request: 같은 device ID를 사용하는 사용자가 존재할 경우 발생함"),
@@ -38,7 +39,7 @@ public class UserController {
         return userService.add(request);
     }
 
-    @Operation(summary = "User/list: 사용자의 정보를 조회할 경우 사용하는 함수", description = "userId를 URL 안에 Path Variable로써 정수 형태로 입력받는다.")
+    @Operation(summary = "User/list: 사용자의 정보를 조회할 경우 사용하는 API Call", description = "userId를 URL 안에 Path Variable로써 정수 형태로 입력받는다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "OK: 사용자를 정상적으로 조회함을 의미함"),
         @ApiResponse(responseCode = "404", description = "Not Found: Path Variable로 명시한 User가 존재하지 않을 경우 발생함"),
