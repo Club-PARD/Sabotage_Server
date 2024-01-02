@@ -45,7 +45,7 @@ public class GoalGroupService {
                     .body(Response.setFailure("그룹 이름이 비어 있어요!", "GoalGroup/add: Goal Group title is empty or null"));
             if(apps == null || apps.isEmpty())
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Response.setFailure("그룹에 속하는 어플리케이션 리스트가 없어요!", "GoalGroup/add: Apps list can be empty but cannot be null"));
+                    .body(Response.setFailure("그룹에 속하는 어플리케이션 리스트가 없어요!", "GoalGroup/add: Apps list is empty or null"));
             if(timeBudget == null || timeBudget <= 0)
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Response.setFailure("목표 시간이 존재하지 않거나 양의 정수가 아니에요!", "GoalGroup/add: Time budget is null or not positive"));
