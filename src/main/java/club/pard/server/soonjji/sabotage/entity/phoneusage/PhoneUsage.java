@@ -11,10 +11,17 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "phone_usage")
+@Getter
+@ToString
+@NoArgsConstructor
 public class PhoneUsage {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,8 +30,11 @@ public class PhoneUsage {
     private User user;
 
     @Column(nullable = false)
-    private Date usageDate;
+    private Date date;
 
-    @Column(nullable = false)
-    private Long usageRecorded;
+    @Column(nullable = false) @Setter
+    private Long timeUsed;
+
+    @Builder
+    public PhoneUsage(Date date, Long timeUsed){ this.date = date; this.timeUsed = timeUsed; }
 }
