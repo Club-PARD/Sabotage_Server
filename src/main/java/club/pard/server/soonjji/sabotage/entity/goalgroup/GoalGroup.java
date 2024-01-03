@@ -35,8 +35,8 @@ public class GoalGroup {
     @Setter @Column(nullable = false)
     private String title;
 
-    @Setter @OneToMany(mappedBy = "goalGroup", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Goal> goals = new ArrayList<>();
+    // @Setter @OneToMany(mappedBy = "goalGroup", cascade = CascadeType.ALL, orphanRemoval = true)
+    // private List<Goal> goals = new ArrayList<>();
 
     @Setter @Column(nullable = false)
     private Long timeBudget;
@@ -53,19 +53,19 @@ public class GoalGroup {
         this.nudgeInterval = nudgeInterval;
     }
 
-    public void addGoal(Goal goal)
-    {
-        this.goals.add(goal);
-        goal.setUser(this.getUser());
-        goal.setGoalGroup(this);
-        goal.setTimeBudget(this.timeBudget);
-        goal.setNudgeInterval(this.nudgeInterval);
-    }
+    // public void addGoal(Goal goal)
+    // {
+    //     this.goals.add(goal);
+    //     goal.setUser(this.getUser());
+    //     goal.setGoalGroup(this);
+    //     goal.setTimeBudget(this.timeBudget);
+    //     goal.setNudgeInterval(this.nudgeInterval);
+    // }
 
-    public void removeGoal(Goal goal)
-    {
-        this.goals.remove(goal);
-        goal.setUser(null);
-        goal.setGoalGroup(null);
-    }
+    // public void removeGoal(Goal goal)
+    // {
+    //     this.goals.remove(goal);
+    //     goal.setUser(null);
+    //     goal.setGoalGroup(null);
+    // }
 }

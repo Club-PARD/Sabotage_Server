@@ -24,8 +24,8 @@ public class GoalGroupSimplifiedResponse {
     @Schema(description = "목표 그룹 제목", example = "goal_group_title")
     private String title;
 
-    @Schema(description = "목표 그룹에 속한 앱들의 목록", example = "{\"appId_1\", \"appId_2\", ...}")
-    private List<String> apps;
+    // @Schema(description = "목표 그룹에 속한 앱들의 목록", example = "{\"appId_1\", \"appId_2\", ...}")
+    // private List<String> apps;
 
     @Schema(description = "목표 그룹에서 정한 시간 제한(분 단위)")
     private Long timeBudget;
@@ -41,9 +41,9 @@ public class GoalGroupSimplifiedResponse {
         response.setTimeBudget(goalGroup.getTimeBudget());
         response.setNudgeInterval(goalGroup.getNudgeInterval());
 
-        response.setApps(new ArrayList<>());
-        for(Goal goal: goalGroup.getGoals())
-            response.getApps().add(goal.getAppId());
+        // response.setApps(new ArrayList<>());
+        // for(Goal goal: goalGroup.getGoals())
+        //     response.getApps().add(goal.getAppId());
         
         return response;
     }

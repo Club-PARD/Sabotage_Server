@@ -19,9 +19,9 @@ public class UpdateGoalGroupRequest {
     @NotBlank(message = "Title should not be null or empty")
     private String title;
 
-    @Schema(description = "수정할 목표 그룹의 새 앱들 목록. null이거나 비어있을 수 없음")
-    @NotNull(message = "Apps list should not be null")
-    private List<String> apps;
+    // @Schema(description = "수정할 목표 그룹에 넣을 새 앱들 목록. 비어있을 순 있지만 null일 수 없음")
+    // @NotNull(message = "Apps list should not be null")
+    // private List<String> apps;
 
     @Schema(description = "수정할 목표 그룹의 새 목표 시간(분 단위). null이거나 0 이하의 정수일 수 없음")
     @NotNull(message = "Time budget should not be null") @Positive(message = "Time budget should be positive")
