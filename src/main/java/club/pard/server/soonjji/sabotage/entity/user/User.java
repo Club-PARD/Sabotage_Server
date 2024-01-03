@@ -8,7 +8,7 @@ import club.pard.server.soonjji.sabotage.converter.PasswordEncryptConverter;
 import club.pard.server.soonjji.sabotage.entity.actionitem.ActionItem;
 import club.pard.server.soonjji.sabotage.entity.ejection.Ejection;
 import club.pard.server.soonjji.sabotage.entity.goalgroup.GoalGroup;
-import club.pard.server.soonjji.sabotage.entity.phoneusage.AppSpecificUsage;
+import club.pard.server.soonjji.sabotage.entity.phoneusage.PhoneUsage;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -47,7 +47,7 @@ public class User {
     private List<GoalGroup> goalGroups = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<AppSpecificUsage> appUsages = new ArrayList<>();
+    private List<PhoneUsage> phoneUsages = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Ejection> ejections = new ArrayList<>();
@@ -72,4 +72,7 @@ public class User {
 
     public void addEjection(Ejection ejection){ this.ejections.add(ejection); ejection.setUser(this); }
     public void removeEjection(Ejection ejection){ this.ejections.remove(ejection); ejection.setUser(null); }
+
+    public void addPhoneUsage(PhoneUsage phoneUsage){ this.phoneUsages.add(phoneUsage); phoneUsage.setUser(this); }
+    public void removePhoneUsage(PhoneUsage phoneUsage){ this.phoneUsages.remove(phoneUsage); phoneUsage.setUser(null); }
 }

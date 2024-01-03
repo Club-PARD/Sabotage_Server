@@ -11,19 +11,20 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Setter;
 
 @Entity
-@Table(name = "date_specific_usage")
-public class DateSpecificUsage {
+@Table(name = "phone_usage")
+public class PhoneUsage {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne @JoinColumn(name = "user_id")
+    @ManyToOne @JoinColumn(name = "user_id") @Setter
     private User user;
 
     @Column(nullable = false)
-    private Date date;
+    private Date usageDate;
 
     @Column(nullable = false)
-    private Long secondsUsed;
+    private Long usageRecorded;
 }
