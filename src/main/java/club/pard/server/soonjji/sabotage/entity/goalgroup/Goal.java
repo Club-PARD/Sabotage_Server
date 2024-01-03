@@ -37,10 +37,14 @@ public class Goal {
     @Setter @Column(nullable = false)
     private Long timeBudget;
 
+    @Setter @Column(nullable = false)
+    private Long nudgeInterval;
+
     @Builder
-    public Goal(String appId, Long timeBudget)
+    public Goal(String appId, Long timeBudget, Long nudgeInterval)
     {
         this.appId = appId;
         this.timeBudget = timeBudget;
+        this.nudgeInterval = nudgeInterval;
     }
 }

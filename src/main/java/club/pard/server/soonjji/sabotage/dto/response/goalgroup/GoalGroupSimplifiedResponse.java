@@ -30,12 +30,16 @@ public class GoalGroupSimplifiedResponse {
     @Schema(description = "목표 그룹에서 정한 시간 제한(분 단위)")
     private Long timeBudget;
 
+    @Schema(description = "목표 그룹에서 정한 알림 간격 시간(분 단위)")
+    private Long nudgeInterval;
+
     public static GoalGroupSimplifiedResponse from(GoalGroup goalGroup){
         GoalGroupSimplifiedResponse response = new GoalGroupSimplifiedResponse();
         response.setId(goalGroup.getId());
         response.setUserId(goalGroup.getUser().getId());
         response.setTitle(goalGroup.getTitle());
         response.setTimeBudget(goalGroup.getTimeBudget());
+        response.setNudgeInterval(goalGroup.getNudgeInterval());
 
         response.setApps(new ArrayList<>());
         for(Goal goal: goalGroup.getGoals())

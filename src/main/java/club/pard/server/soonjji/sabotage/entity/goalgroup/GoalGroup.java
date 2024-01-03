@@ -41,12 +41,16 @@ public class GoalGroup {
     @Setter @Column(nullable = false)
     private Long timeBudget;
 
+    @Setter @Column(nullable = false)
+    private Long nudgeInterval;
+
 
     @Builder
-    public GoalGroup(String title, Long timeBudget)
+    public GoalGroup(String title, Long timeBudget, Long nudgeInterval)
     {
         this.title = title;
         this.timeBudget = timeBudget;
+        this.nudgeInterval = nudgeInterval;
     }
 
     public void addGoal(Goal goal)
@@ -55,5 +59,13 @@ public class GoalGroup {
         goal.setUser(this.getUser());
         goal.setGoalGroup(this);
         goal.setTimeBudget(this.timeBudget);
+        goal.setNudgeInterval(this.nudgeInterval);
+    }
+
+    public void removeGoal(Goal goal)
+    {
+        this.goals.remove(goal);
+        goal.setUser(null);
+        goal.setGoalGroup(null);
     }
 }

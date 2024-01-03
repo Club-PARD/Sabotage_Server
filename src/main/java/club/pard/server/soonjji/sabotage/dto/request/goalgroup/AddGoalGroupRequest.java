@@ -24,4 +24,8 @@ public class AddGoalGroupRequest {
     @Schema(description = "목표 설정 시간(분 단위). null이거나 0 이하의 정수가 들어갈 수 없음.")
     @NotNull(message = "Time budget should not be null") @Positive(message = "Time budget should be positive")
     private Long timeBudget;
+
+    @Schema(description = "알림 간격 시간(분 단위). null이거나 0 이하의 정수가 들어갈 수 없음.")
+    @NotNull(message = "Nudge interval should not be null") @Positive(message = "Nudge interval should be positive")
+    private Long nudgeInterval;
 }
