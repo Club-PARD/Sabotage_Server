@@ -30,8 +30,10 @@ public class UserService {
         {
             String deviceId = request.getDeviceId();
             if(userRepository.existsByDeviceId(deviceId))
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Response.setFailure("해당 기기로 등록된 사용자가 이미 있어요!", "User/register: deviceId exists"));
+                return ResponseEntity.status(HttpStatus.OK)
+                    .body(Response.setSuccess("해당 기기로 등록된 사용자가 이미 있어요!", "User/register: deviceId exists", UserSimplifiedResponse.from(userRepository.findByDeviceId(deviceId).get())));
+                // return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                //     .body(Response.setFailure("해당 기기로 등록된 사용자가 이미 있어요!", "User/register: deviceId exists"));
 
             Random rng = new Random();
             String newNickname;
@@ -44,7 +46,6 @@ public class UserService {
                 );
             }while(userRepository.existsByNickname(newNickname));
 
-            System.out.println(deviceId + " / " + newNickname);
             User newUser = User.builder().deviceId(deviceId).nickname(newNickname).build();
             userRepository.save(newUser);
 
