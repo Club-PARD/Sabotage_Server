@@ -24,12 +24,6 @@ public class PasswordEncryptConverter implements AttributeConverter<String, Stri
         KEY = encryptionKey.getBytes();
     }
 
-    // @Override
-    // public String convertToDatabaseColumn(String entityAttribute) { return passwordEncoder.encode(entityAttribute); }
-
-    // @Override
-    // public String convertToEntityAttribute(String databaseColumn) { return databaseColumn; }
-
     @Override
     public String convertToDatabaseColumn(String attribute) {
         Key key = new SecretKeySpec(KEY, "AES");

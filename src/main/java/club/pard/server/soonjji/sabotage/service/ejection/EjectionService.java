@@ -101,7 +101,6 @@ public class EjectionService {
             if(!userRepository.existsById(userId))
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Response.setFailure("해당 사용자가 존재하지 않아요!", "Ejection/getTodays: Target User not existent"));
-            // List<Ejection> ejections = ejectionRepository.findAllByUserIdAndTimeOccurredGreaterThanEqual(userId, targetTimestamp);
             Long ejections = ejectionRepository.countByUserIdAndTimeOccurredGreaterThanEqual(userId, targetTimestamp);
     
             return ResponseEntity.status(HttpStatus.OK)

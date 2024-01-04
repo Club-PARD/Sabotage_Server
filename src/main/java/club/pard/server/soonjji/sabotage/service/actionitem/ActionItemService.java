@@ -103,12 +103,10 @@ public class ActionItemService {
     {
         try
         {
-            // User targetUser = userRepository.findById(userId).orElse(null);
             if(!userRepository.existsById(userId))
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Response.setFailure("사용자가 존재하지 않아요!", "ActionItem/expose: Target User does not exist"));
 
-            // ActionItem targetActionItem = actionItemRepository.findLeastExposedActionItemByUser(userId);
             ActionItem targetActionItem = actionItemRepository.findFirst1ByUserIdOrderByExposureCountAsc(userId);
             if(targetActionItem == null)
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
