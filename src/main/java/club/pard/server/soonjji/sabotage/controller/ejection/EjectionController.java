@@ -3,7 +3,6 @@ package club.pard.server.soonjji.sabotage.controller.ejection;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import club.pard.server.soonjji.sabotage.dto.response.Response;
-import club.pard.server.soonjji.sabotage.dto.response.ejection.EjectionRankResponse;
+import club.pard.server.soonjji.sabotage.dto.response.ejection.ListEjectionRankResponse;
 import club.pard.server.soonjji.sabotage.service.ejection.EjectionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -63,10 +62,10 @@ public class EjectionController {
         @ApiResponse(responseCode = "400", description = "Bad Request: 여기선 안 다루지만 GlobalExceptionHandler에서 전역으로 다루는 Response", content = @Content),
         @ApiResponse(responseCode = "500", description = "Internal Server Error: 서버에 다루지 못한 Exception이 발생, 예외 스택이 출력될 것이니 서버 관리자가 확인해야 함", content = @Content)
     })
-    @GetMapping("/rank")
-    public ResponseEntity<Response<List<EjectionRankResponse>>> getRank()
+    @GetMapping("/rank/{userId}")
+    public ResponseEntity<Response<ListEjectionRankResponse>> getRank(@PathVariable Long userId)
     {
         Timestamp startOfToday = Timestamp.valueOf(LocalDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate().atStartOfDay());
-        return ejectionService.getRank(startOfToday);
+        return ejectionService.getRank(userId, startOfToday);
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import club.pard.server.soonjji.sabotage.dto.response.Response;
 import club.pard.server.soonjji.sabotage.dto.response.ejection.EjectionRankResponse;
+import club.pard.server.soonjji.sabotage.dto.response.ejection.ListEjectionRankResponse;
 import club.pard.server.soonjji.sabotage.entity.ejection.Ejection;
 import club.pard.server.soonjji.sabotage.entity.user.User;
 import club.pard.server.soonjji.sabotage.repository.ejection.EjectionRank;
@@ -51,21 +52,38 @@ public class EjectionService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<Response<List<EjectionRankResponse>>> getRank(Timestamp targetTimestamp)
+    public ResponseEntity<Response<ListEjectionRankResponse>> getRank(Long userId, Timestamp targetTimestamp)
     {
         try
         {
-            List<EjectionRank> rankRaw = ejectionRepository.getRank(targetTimestamp);
-
+            List<EjectionRank> rankRaw = ejectionRepository.getRankList(targetTimestamp);
             List<EjectionRankResponse> rank = new ArrayList<>();
+            Long targetUserRank = null;
+            Long targetUserEjectionCount = null;
+            String targetUserNickname = null;
+
             for(EjectionRank each: rankRaw)
             {
-                String nickname = userRepository.findById(each.getUserId()).get().getNickname();
-                Long EjectionRank = each.getEjectionCount();
-                rank.add(new EjectionRankResponse(nickname, EjectionRank));
+                if(each.getUserId() == userId)
+                {
+                    targetUserRank = each.getRank();
+                    targetUserNickname = userRepository.findById(each.getUserId()).get().getNickname();
+                    targetUserEjectionCount = each.getEjectionCount();
+                }
+                if(rank.size() < 10)
+                {
+                    String nickname = userRepository.findById(each.getUserId()).get().getNickname();
+                    // String nickname = each.getUserNickname();
+                    Long ejectionRank = each.getRank();       
+                    Long ejectionCount = each.getEjectionCount();
+                    rank.add(new EjectionRankResponse(ejectionRank, nickname, ejectionCount));
+                }
+                else if(targetUserRank != null) break;
             }
+            EjectionRankResponse myRank = EjectionRankResponse.of(targetUserRank, targetUserNickname, targetUserEjectionCount);
+
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(Response.setSuccess("탈출 순위표 조회 완료!", "Ejection/getRank: Successful", rank));
+                    .body(Response.setSuccess("탈출 순위표 조회 완료!", "Ejection/getRank: Successful", ListEjectionRankResponse.of(userId, rank, myRank)));
         }
         catch(Exception e)
         {
