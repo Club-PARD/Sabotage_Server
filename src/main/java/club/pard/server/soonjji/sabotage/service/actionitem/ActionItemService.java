@@ -47,6 +47,11 @@ public class ActionItemService {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Response.setFailure("같은 이름의 Action Item이 이미 있어요!", "ActionItem/add: Action item already exists with the same name and category"));
 
+            if(targetUser.getActionItems().size() == 5)
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Response.setFailure("사용자의 Action Item 갯수 제한(5개)을 이미 채웠어요!", "ActionItem/add: Target User has already reached Action Item number of 5"));
+
+
             ActionItem newActionItem = ActionItem.builder().category(itemCategory).content(item).build();
             targetUser.addActionItem(newActionItem);
             actionItemRepository.save(newActionItem);

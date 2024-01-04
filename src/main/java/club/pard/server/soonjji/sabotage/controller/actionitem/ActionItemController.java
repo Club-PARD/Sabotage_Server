@@ -36,7 +36,7 @@ public class ActionItemController {
     @Operation(summary = "ActionItem/add: Action Item 추가 시 사용하는 API Call", description = "userId를 URL 안에 Path Variable로써 정수 형태로, Action Item의 카테고리와 이름을 각각 Body로써 문자열 형태로 입력받는다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "OK: Action Item이 정상적으로 추가됨을 의미함"),
-        @ApiResponse(responseCode = "400", description = "Bad Request: Action Item 추가 시 카테고리나 내용이 비어 있거나 전송되지 않은 경우, 혹은 같은 카테고리/이름으로 된 Action Item이 존재할 경우 발생함", content = @Content),
+        @ApiResponse(responseCode = "400", description = "Bad Request: Action Item 추가 시 카테고리나 내용이 비어 있거나 전송되지 않은 경우, 혹은 같은 카테고리/이름으로 된 Action Item이 존재할 경우, 혹은 사용자가 가질 수 있는 갯수(5개)를 전부 가지고 있을 경우 발생함", content = @Content),
         @ApiResponse(responseCode = "404", description = "Not Found: Path Variable로 명시한 User가 존재하지 않을 경우 발생함", content = @Content),
         @ApiResponse(responseCode = "500", description = "Internal Server Error: 서버에 다루지 못한 Exception이 발생, 예외 스택이 출력될 것이니 서버 관리자가 확인해야 함", content = @Content)
     })
