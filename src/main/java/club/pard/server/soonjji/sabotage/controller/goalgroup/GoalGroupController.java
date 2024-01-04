@@ -1,5 +1,7 @@
 package club.pard.server.soonjji.sabotage.controller.goalgroup;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,7 +16,6 @@ import club.pard.server.soonjji.sabotage.dto.request.goalgroup.AddGoalGroupReque
 import club.pard.server.soonjji.sabotage.dto.request.goalgroup.UpdateGoalGroupRequest;
 import club.pard.server.soonjji.sabotage.dto.response.Response;
 import club.pard.server.soonjji.sabotage.dto.response.goalgroup.GoalGroupSimplifiedResponse;
-import club.pard.server.soonjji.sabotage.dto.response.goalgroup.ListGoalGroupResponse;
 import club.pard.server.soonjji.sabotage.service.goalgroup.GoalGroupService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -53,7 +54,7 @@ public class GoalGroupController {
         @ApiResponse(responseCode = "500", description = "Internal Server Error: 서버에 다루지 못한 Exception이 발생, 예외 스택이 출력될 것이니 서버 관리자가 확인해야 함", content = @Content)
     })
     @GetMapping("/{userId}")
-    public ResponseEntity<Response<ListGoalGroupResponse>> list(@Parameter(description = "목표 그룹 목록을 조회할 대상 사용자의 ID", required = true) @PathVariable Long userId)
+    public ResponseEntity<Response<List<GoalGroupSimplifiedResponse>>> list(@Parameter(description = "목표 그룹 목록을 조회할 대상 사용자의 ID", required = true) @PathVariable Long userId)
     {
         return goalGroupService.list(userId);
     }

@@ -12,7 +12,6 @@ import club.pard.server.soonjji.sabotage.dto.request.actionitem.AddActionItemReq
 import club.pard.server.soonjji.sabotage.dto.request.actionitem.UpdateActionItemRequest;
 import club.pard.server.soonjji.sabotage.dto.response.Response;
 import club.pard.server.soonjji.sabotage.dto.response.actionitem.ActionItemSimplifiedResponse;
-import club.pard.server.soonjji.sabotage.dto.response.actionitem.ListActionItemResponse;
 import club.pard.server.soonjji.sabotage.entity.actionitem.ActionItem;
 import club.pard.server.soonjji.sabotage.entity.user.User;
 import club.pard.server.soonjji.sabotage.repository.actionitem.ActionItemRepository;
@@ -69,7 +68,7 @@ public class ActionItemService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<Response<ListActionItemResponse>> list(Long userId)
+    public ResponseEntity<Response<List<ActionItemSimplifiedResponse>>> list(Long userId)
     {
         try
         {
@@ -88,9 +87,8 @@ public class ActionItemService {
                 itemsSimplified.add(ActionItemSimplifiedResponse.from(item));
             });
 
-            Boolean canBeAddedMore = (itemsSimplified.size() < 5);
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(Response.setSuccess("Action Item 목록 조회 완료!", "ActionItem/list: Successful", ListActionItemResponse.of(userId, itemsSimplified, canBeAddedMore)));
+                    .body(Response.setSuccess("Action Item 목록 조회 완료!", "ActionItem/list: Successful", itemsSimplified));
         }
         catch(Exception e)
         {

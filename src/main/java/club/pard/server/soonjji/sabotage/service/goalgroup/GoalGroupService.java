@@ -14,7 +14,6 @@ import club.pard.server.soonjji.sabotage.dto.request.goalgroup.AddGoalGroupReque
 import club.pard.server.soonjji.sabotage.dto.request.goalgroup.UpdateGoalGroupRequest;
 import club.pard.server.soonjji.sabotage.dto.response.Response;
 import club.pard.server.soonjji.sabotage.dto.response.goalgroup.GoalGroupSimplifiedResponse;
-import club.pard.server.soonjji.sabotage.dto.response.goalgroup.ListGoalGroupResponse;
 // import club.pard.server.soonjji.sabotage.entity.goalgroup.Goal;
 import club.pard.server.soonjji.sabotage.entity.goalgroup.GoalGroup;
 import club.pard.server.soonjji.sabotage.entity.user.User;
@@ -105,7 +104,7 @@ public class GoalGroupService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<Response<ListGoalGroupResponse>> list(Long userId)
+    public ResponseEntity<Response<List<GoalGroupSimplifiedResponse>>> list(Long userId)
     {
         try
         {
@@ -123,10 +122,8 @@ public class GoalGroupService {
             for(GoalGroup goalGroup: goalGroups)
                 goalGroupsSimplified.add(GoalGroupSimplifiedResponse.from(goalGroup));
 
-            Boolean canBeAddedMore = (goalGroupsSimplified.size() < 1);
-
             return ResponseEntity.status(HttpStatus.OK)
-                .body(Response.setSuccess("목표 그룹 조회 완료!", "GoalGroup/list: Successful", ListGoalGroupResponse.of(userId, goalGroupsSimplified, canBeAddedMore)));
+                .body(Response.setSuccess("목표 그룹 조회 완료!", "GoalGroup/list: Successful", goalGroupsSimplified));
         }
         catch(Exception e)
         {

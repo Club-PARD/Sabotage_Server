@@ -16,7 +16,6 @@ import club.pard.server.soonjji.sabotage.dto.request.actionitem.AddActionItemReq
 import club.pard.server.soonjji.sabotage.dto.request.actionitem.UpdateActionItemRequest;
 import club.pard.server.soonjji.sabotage.dto.response.Response;
 import club.pard.server.soonjji.sabotage.dto.response.actionitem.ActionItemSimplifiedResponse;
-import club.pard.server.soonjji.sabotage.dto.response.actionitem.ListActionItemResponse;
 import club.pard.server.soonjji.sabotage.service.actionitem.ActionItemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -55,7 +54,7 @@ public class ActionItemController {
         @ApiResponse(responseCode = "500", description = "Internal Server Error: 서버에 다루지 못한 Exception이 발생, 예외 스택이 출력될 것이니 서버 관리자가 확인해야 함", content = @Content)
     })
     @GetMapping("/{userId}/all")
-    public ResponseEntity<Response<ListActionItemResponse>> list(@Parameter(description = "Action Item 목록을 조회할 대상 사용자의 ID", required = true) @PathVariable Long userId)
+    public ResponseEntity<Response<List<ActionItemSimplifiedResponse>>> list(@Parameter(description = "Action Item 목록을 조회할 대상 사용자의 ID", required = true) @PathVariable Long userId)
     {
         return actionItemService.list(userId);
     }
