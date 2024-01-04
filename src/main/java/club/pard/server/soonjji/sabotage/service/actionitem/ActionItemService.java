@@ -12,6 +12,7 @@ import club.pard.server.soonjji.sabotage.dto.request.actionitem.AddActionItemReq
 import club.pard.server.soonjji.sabotage.dto.request.actionitem.UpdateActionItemRequest;
 import club.pard.server.soonjji.sabotage.dto.response.Response;
 import club.pard.server.soonjji.sabotage.dto.response.actionitem.ActionItemSimplifiedResponse;
+import club.pard.server.soonjji.sabotage.dto.response.actionitem.ListActionItemResponse;
 import club.pard.server.soonjji.sabotage.entity.actionitem.ActionItem;
 import club.pard.server.soonjji.sabotage.entity.user.User;
 import club.pard.server.soonjji.sabotage.repository.actionitem.ActionItemRepository;
@@ -47,7 +48,7 @@ public class ActionItemService {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Response.setFailure("같은 이름의 Action Item이 이미 있어요!", "ActionItem/add: Action item already exists with the same name and category"));
 
-            if(targetUser.getActionItems().size() == 5)
+            if(targetUser.getActionItems().size() >= 5)
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Response.setFailure("사용자의 Action Item 갯수 제한(5개)을 이미 채웠어요!", "ActionItem/add: Target User has already reached Action Item number of 5"));
 
@@ -68,7 +69,7 @@ public class ActionItemService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<Response<List<ActionItemSimplifiedResponse>>> list(Long userId)
+    public ResponseEntity<Response<ListActionItemResponse>> list(Long userId)
     {
         try
         {
@@ -87,8 +88,9 @@ public class ActionItemService {
                 itemsSimplified.add(ActionItemSimplifiedResponse.from(item));
             });
 
+            Boolean canBeAddedMore = (itemsSimplified.size() < 5);
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(Response.setSuccess("Action Item 목록 조회 완료!", "ActionItem/list: Successful", itemsSimplified));
+                    .body(Response.setSuccess("Action Item 목록 조회 완료!", "ActionItem/list: Successful", ListActionItemResponse.of(userId, itemsSimplified, canBeAddedMore)));
         }
         catch(Exception e)
         {
