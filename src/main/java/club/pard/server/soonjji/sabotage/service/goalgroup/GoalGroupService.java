@@ -14,6 +14,7 @@ import club.pard.server.soonjji.sabotage.dto.request.goalgroup.AddGoalGroupReque
 import club.pard.server.soonjji.sabotage.dto.request.goalgroup.UpdateGoalGroupRequest;
 import club.pard.server.soonjji.sabotage.dto.response.Response;
 import club.pard.server.soonjji.sabotage.dto.response.goalgroup.GoalGroupSimplifiedResponse;
+import club.pard.server.soonjji.sabotage.dto.response.goalgroup.ListGoalGroupResponse;
 // import club.pard.server.soonjji.sabotage.entity.goalgroup.Goal;
 import club.pard.server.soonjji.sabotage.entity.goalgroup.GoalGroup;
 import club.pard.server.soonjji.sabotage.entity.user.User;
@@ -75,6 +76,9 @@ public class GoalGroupService {
             //     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             //         .body(Response.setFailure("이미 다른 그룹에 선택된 앱이 있어요!", "GoalGroup/add: One of selected apps already existent in another group"));
 
+            if(targetUser.getGoalGroups().size() >= 1)
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Response.setFailure("사용자의 Goal Group 갯수 제한(1개)를 이미 채웠어요!", "GoalGroup/add: Target User already has reached Goal Group number of 1"));
 
             GoalGroup newGoalGroup = GoalGroup.builder().title(groupTitle).timeBudget(timeBudget).nudgeInterval(nudgeInterval).build();
             targetUser.addGoalGroup(newGoalGroup);
@@ -101,14 +105,14 @@ public class GoalGroupService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<Response<List<GoalGroupSimplifiedResponse>>> list(Long userId)
+    public ResponseEntity<Response<ListGoalGroupResponse>> list(Long userId)
     {
         try
         {
-            User user = userRepository.findById(userId).orElse(null);
+            User yser = userRepository.findById(userId).orElse(null);
             List<GoalGroup> goalGroups = goalGroupRepository.findAllByUserId(userId);
 
-            if(user == null)
+            if(yser == null)
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Response.setFailure("해당 사용자가 존재하지 않아요!", "GoalGroup/list: Target User not existent"));
             if(goalGroups == null)
@@ -119,8 +123,10 @@ public class GoalGroupService {
             for(GoalGroup goalGroup: goalGroups)
                 goalGroupsSimplified.add(GoalGroupSimplifiedResponse.from(goalGroup));
 
+            Boolean canBeAddedMore = (goalGroupsSimplified.size() < 1);
+
             return ResponseEntity.status(HttpStatus.OK)
-                .body(Response.setSuccess("목표 그룹 조회 완료!", "GoalGroup/list: Successful", goalGroupsSimplified));
+                .body(Response.setSuccess("목표 그룹 조회 완료!", "GoalGroup/list: Successful", ListGoalGroupResponse.of(userId, goalGroupsSimplified, canBeAddedMore)));
         }
         catch(Exception e)
         {
