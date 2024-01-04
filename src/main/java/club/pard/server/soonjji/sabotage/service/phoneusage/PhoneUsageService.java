@@ -28,12 +28,12 @@ public class PhoneUsageService {
     private final PhoneUsageRepository phoneUsageRepository;
     private final UserRepository userRepository;
 
-    // @Transactional
-    public ResponseEntity<Response<PhoneUsageSimplifiedResponse>> add(AddPhoneUsageRequest request)
+    @Transactional
+    public ResponseEntity<Response<PhoneUsageSimplifiedResponse>> add(Long userId, AddPhoneUsageRequest request)
     {
         try
         {
-            User targetUser = userRepository.findById(request.getUserId()).orElse(null);
+            User targetUser = userRepository.findById(userId).orElse(null);
             if(targetUser == null)
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Response.setFailure("해당 사용자가 존재하지 않아요!", "PhoneUsage/add: Target User not existent"));
@@ -70,19 +70,6 @@ public class PhoneUsageService {
         }
     }
 
-    /*
-        From java.sql.Date date to LocalDate localDate:
-        date.toLocalDate().atStartOfDay(ZoneId.systemDefault())
-
-        1 - localDate.getDayOfWeek().getValue() ~ (<0)
-
-        Geting LocalDate oneDayLessLocalDate from localDate:
-        localDate.minusDays(1L)
-
-        LocalDate localDate to  Long fromEpoch
-        localDate.getInstant().toEpochMilli()
-    */
-
     @Transactional(readOnly = true)
     public ResponseEntity<Response<PhoneUsageComparisonDailyResponse>> getAnalysisDaily(Long userId, String targetDateString)
     {
@@ -94,6 +81,10 @@ public class PhoneUsageService {
             if(targetUser == null)
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Response.setFailure("해당 사용자가 존재하지 않아요!", "PhoneUsage/getAnalysisDaily: Target User not existent"));
+
+            if(targetDate == null || targetDate.compareTo(new Date(System.currentTimeMillis())) > 0)
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Response.setFailure("사용 날짜를 확인할 수 없거나 지나가지 않은 날짜에요!", "PhoneUsage/getAnalysisDaily: Date is null or of future time"));
             
             Date yesterday = Date.valueOf(targetDate.toLocalDate().atStartOfDay(ZoneId.systemDefault()).toLocalDate()
                 .minusDays(1));
@@ -126,6 +117,10 @@ public class PhoneUsageService {
             if(targetUser == null)
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Response.setFailure("해당 사용자가 존재하지 않아요!", "PhoneUsage/getAnalysisDaily: Target User not existent"));
+
+            if(targetDate == null || targetDate.compareTo(new Date(System.currentTimeMillis())) > 0)
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Response.setFailure("사용 날짜를 확인할 수 없거나 지나가지 않은 날짜에요!", "PhoneUsage/getAnalysisWeekly: Date is null or of future time"));
             
             List<Long> timeUsedWeekly = new ArrayList<>();
             int dayOfWeek = targetDate.toLocalDate().getDayOfWeek().getValue();
