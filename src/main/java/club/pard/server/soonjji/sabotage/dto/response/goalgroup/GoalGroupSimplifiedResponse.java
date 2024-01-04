@@ -1,9 +1,5 @@
 package club.pard.server.soonjji.sabotage.dto.response.goalgroup;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import club.pard.server.soonjji.sabotage.entity.goalgroup.Goal;
 import club.pard.server.soonjji.sabotage.entity.goalgroup.GoalGroup;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -24,6 +20,7 @@ public class GoalGroupSimplifiedResponse {
     @Schema(description = "목표 그룹 제목", example = "goal_group_title")
     private String title;
 
+    // // TODO: revise GoalGroup so that apps list could be added
     // @Schema(description = "목표 그룹에 속한 앱들의 목록", example = "{\"appId_1\", \"appId_2\", ...}")
     // private List<String> apps;
 
@@ -41,6 +38,7 @@ public class GoalGroupSimplifiedResponse {
         response.setTimeBudget(goalGroup.getTimeBudget());
         response.setNudgeInterval(goalGroup.getNudgeInterval());
 
+        // // TODO: revise GoalGroup so that apps list could be added
         // response.setApps(new ArrayList<>());
         // for(Goal goal: goalGroup.getGoals())
         //     response.getApps().add(goal.getAppId());

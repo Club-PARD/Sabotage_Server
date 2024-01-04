@@ -1,7 +1,6 @@
 package club.pard.server.soonjji.sabotage.service.phoneusage;
 
 import java.sql.Date;
-import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;

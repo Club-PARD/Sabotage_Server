@@ -1,7 +1,5 @@
 package club.pard.server.soonjji.sabotage.dto.request.goalgroup;
 
-import java.util.List;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -19,6 +17,7 @@ public class UpdateGoalGroupRequest {
     @NotBlank(message = "Title should not be null or empty")
     private String title;
 
+    // // TODO: revise GoalGroup so that apps list could be added
     // @Schema(description = "수정할 목표 그룹에 넣을 새 앱들 목록. 비어있을 순 있지만 null일 수 없음")
     // @NotNull(message = "Apps list should not be null")
     // private List<String> apps;

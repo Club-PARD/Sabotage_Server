@@ -1,9 +1,9 @@
 package club.pard.server.soonjji.sabotage.service.goalgroup;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+// import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+// import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,11 +14,11 @@ import club.pard.server.soonjji.sabotage.dto.request.goalgroup.AddGoalGroupReque
 import club.pard.server.soonjji.sabotage.dto.request.goalgroup.UpdateGoalGroupRequest;
 import club.pard.server.soonjji.sabotage.dto.response.Response;
 import club.pard.server.soonjji.sabotage.dto.response.goalgroup.GoalGroupSimplifiedResponse;
-import club.pard.server.soonjji.sabotage.entity.goalgroup.Goal;
+// import club.pard.server.soonjji.sabotage.entity.goalgroup.Goal;
 import club.pard.server.soonjji.sabotage.entity.goalgroup.GoalGroup;
 import club.pard.server.soonjji.sabotage.entity.user.User;
 import club.pard.server.soonjji.sabotage.repository.goalgroup.GoalGroupRepository;
-import club.pard.server.soonjji.sabotage.repository.goalgroup.GoalRepository;
+// import club.pard.server.soonjji.sabotage.repository.goalgroup.GoalRepository;
 import club.pard.server.soonjji.sabotage.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -26,8 +26,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class GoalGroupService {
     private final GoalGroupRepository goalGroupRepository;
-    private final GoalRepository goalRepository;
     private final UserRepository userRepository;
+    // // TODO: revise GoalGroup so that apps list could be added
+    // private final GoalRepository goalRepository;
 
     @Transactional
     public ResponseEntity<Response<GoalGroupSimplifiedResponse>> add(Long userId, AddGoalGroupRequest request)
@@ -36,9 +37,10 @@ public class GoalGroupService {
         {
             User targetUser = userRepository.findById(userId).orElse(null);
             String groupTitle = request.getTitle();
-            // List<String> apps = request.getApps();
             Long timeBudget = request.getTimeBudget();
             Long nudgeInterval = request.getNudgeInterval();
+            // // TODO: revise GoalGroup so that apps list could be added
+            // List<String> apps = request.getApps();
     
             if(targetUser == null)
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -55,11 +57,11 @@ public class GoalGroupService {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Response.setFailure("알림 간격 시간이 존재하지 않거나 양의 정수가 아니에요!", "GoalGroup/add: Nudge interval is null or not positive"));
 
-            // // Will be implemented later when Apps can be inserted into GoalGroup
+            // // TODO: revise GoalGroup so that apps list could be added
             // if(apps == null)
             //     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             //         .body(Response.setFailure("그룹에 속하는 어플리케이션 리스트가 존재하지 않아요!", "GoalGroup/add: Apps list can be empty but should not be null"));
-                    
+            //
             // boolean appAlreadyExistentOnAnotherGoalGroup = false;
             // for(String app: apps)
             // {
@@ -78,12 +80,12 @@ public class GoalGroupService {
             targetUser.addGoalGroup(newGoalGroup);
             goalGroupRepository.save(newGoalGroup);
 
-            // // Will be implemented later when Apps can be inserted into GoalGroup
+            // // TODO: revise GoalGroup so that apps list could be added
             // for(String app: apps)
             // {
             //     Goal newGoal = Goal.builder().appId(app).timeBudget(timeBudget).build();
             //     newGoalGroup.addGoal(newGoal);
-
+            //
             //     goalRepository.save(newGoal);
             // }
 
@@ -162,6 +164,7 @@ public class GoalGroupService {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Response.setFailure("알림 간격 시간은 존재하지 않거나 음수일 수 없어요!", "GoalGroup/update: Nudge interval cannot be null or negative"));
 
+            // // TODO: revise GoalGroup so that apps list could be added
             // if(newApps == null)
             //     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             //         .body(Response.setFailure("그룹에 속하는 어플리케이션 리스트가 존재하지 않아요!", "GoalGroup/update: Apps list can be empty but should not be null"));
@@ -172,16 +175,16 @@ public class GoalGroupService {
             targetGoalGroup.setNudgeInterval(newNudgeInterval);
     
 
-            // // Will be implemented later when Apps can be inserted into GoalGroup
+            // // TODO: revise GoalGroup so that apps list could be added
             // Map<String, Goal> goalMap = new HashMap<>();
-
+            //
             // List<String> originalApps = new ArrayList<>();
             // for(Goal goal: targetGoalGroup.getGoals())
             // {
             //     originalApps.add(goal.getAppId());
             //     goalMap.put(goal.getAppId(), goal);
             // }
-
+            //
             // for(String app: newApps)
             // {
             //     if(originalApps.contains(app))
@@ -203,13 +206,6 @@ public class GoalGroupService {
             //         targetGoalGroup.removeGoal(goalMap.get(app));
             //         goalMap.remove(app);
             //     }
-            // }
-
-            // targetGoalGroup.getGoals().clear();
-            // for(String newApp: newApps)
-            // {
-            //     Goal newGoal = Goal.builder().appId(newApp).timeBudget(newTimeBudget).nudgeInterval(newNudgeInterval).build();
-            //     targetGoalGroup.addGoal(newGoal);
             // }
     
             return ResponseEntity.status(HttpStatus.OK)
@@ -242,7 +238,7 @@ public class GoalGroupService {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(Response.setFailure("해당 사용자가 해당 목표 그룹을 소유하지 않아요!", "GoalGroup/remove: Target User does not own target Goal Group"));
 
-            // // Will be implemented later when Apps can be inserted into GoalGroup
+            // // TODO: revise GoalGroup so that apps list could be added
             // for(Goal goal: targetGoalGroup.getGoals())
             //     targetGoalGroup.removeGoal(goal);
             // targetUser.removeGoalGroup(targetGoalGroup);
