@@ -94,8 +94,10 @@ public class PhoneUsageService {
             PhoneUsage phoneUsageYesterday = phoneUsageRepository.findByUserIdAndDate(userId, yesterday).orElse(null);
             Long timeUsedYesterday = (phoneUsageYesterday == null) ? 0 : phoneUsageYesterday.getTimeUsed();
 
+            Long timeUsedDifferenceRate = Math.round((timeUsedToday - timeUsedYesterday) / timeUsedYesterday.doubleValue() * 100);
+
             return ResponseEntity.status(HttpStatus.OK)
-                .body(Response.setSuccess("어제 오늘 사용 시간 조회 성공!", "PHoneUsage/getAnalysisDaily: Successful", new PhoneUsageComparisonDailyResponse(userId, targetDate, timeUsedYesterday, timeUsedToday)));
+                .body(Response.setSuccess("어제 오늘 사용 시간 조회 성공!", "PHoneUsage/getAnalysisDaily: Successful", new PhoneUsageComparisonDailyResponse(userId, targetDate, timeUsedYesterday, timeUsedToday, timeUsedDifferenceRate)));
         }
         catch(Exception e)
         {
