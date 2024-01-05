@@ -244,7 +244,7 @@ public class GoalGroupService {
             // // TODO: revise GoalGroup so that apps list could be added
             // for(Goal goal: targetGoalGroup.getGoals())
             //     targetGoalGroup.removeGoal(goal);
-            // targetUser.removeGoalGroup(targetGoalGroup);
+            targetUser.removeGoalGroup(targetGoalGroup);
 
             return ResponseEntity.status(HttpStatus.OK)
                 .body(Response.setSuccess("목표 그룹 삭제 완료!", "GoalGroup/remove: Successful", null));
