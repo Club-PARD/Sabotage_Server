@@ -79,7 +79,6 @@ main
 │                       ├── dto
 │                       │   ├── request
 │                       │   │   ├── actionitem
-│                       │   │   ├── appusage
 │                       │   │   ├── goalgroup
 │                       │   │   ├── phoneusage
 │                       │   │   └── user
