@@ -21,7 +21,9 @@ import club.pard.server.soonjji.sabotage.repository.goalgroup.GoalGroupRepositor
 // import club.pard.server.soonjji.sabotage.repository.goalgroup.GoalRepository;
 import club.pard.server.soonjji.sabotage.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class GoalGroupService {
@@ -35,6 +37,9 @@ public class GoalGroupService {
     {
         try
         {
+            log.debug(String.format("Received call `POST /api/goalGroup/%d` with %s", userId, request.toString()));
+            
+
             User targetUser = userRepository.findById(userId).orElse(null);
             String groupTitle = request.getTitle();
             Long timeBudget = request.getTimeBudget();
@@ -92,8 +97,12 @@ public class GoalGroupService {
             //     goalRepository.save(newGoal);
             // }
 
+
+            GoalGroupSimplifiedResponse response = GoalGroupSimplifiedResponse.from(newGoalGroup);
+            log.debug(String.format("Answered call `POST /api/goalGroup/%d` successfully with %s", userId, response.toString()));
+
             return ResponseEntity.status(HttpStatus.OK)
-                .body(Response.setSuccess("그룹과 목표 추가 완료!", "GoalGroup/add: Successful", GoalGroupSimplifiedResponse.from(newGoalGroup)));
+                .body(Response.setSuccess("그룹과 목표 추가 완료!", "GoalGroup/add: Successful", response));
         }
         catch(Exception e)
         {
@@ -108,6 +117,9 @@ public class GoalGroupService {
     {
         try
         {
+            log.debug(String.format("Received call `GET /api/goalGroup/%d`", userId));
+
+
             User yser = userRepository.findById(userId).orElse(null);
             List<GoalGroup> goalGroups = goalGroupRepository.findAllByUserId(userId);
 
@@ -118,9 +130,11 @@ public class GoalGroupService {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Response.setFailure("해당 사용자의 목표 그룹 리스트가 존재하지 않아요!", "GoalGroup/list: Goal Group list from target User is null"));
             
+
             List<GoalGroupSimplifiedResponse> goalGroupsSimplified = new ArrayList<>();
             for(GoalGroup goalGroup: goalGroups)
                 goalGroupsSimplified.add(GoalGroupSimplifiedResponse.from(goalGroup));
+            log.debug(String.format("Answered call `GET /api/goalGroup/%d` successfully", userId));
 
             return ResponseEntity.status(HttpStatus.OK)
                 .body(Response.setSuccess("목표 그룹 조회 완료!", "GoalGroup/list: Successful", goalGroupsSimplified));
@@ -138,6 +152,9 @@ public class GoalGroupService {
     {
         try
         {
+            log.debug(String.format("Received call `PATCH /api/goalGroup/%d/%d` with %s", userId, goalGroupId, request.toString()));
+
+
             String newTitle = request.getTitle();
             // List<String> newApps = request.getApps();
             Long newTimeBudget = request.getTimeBudget();
@@ -211,8 +228,12 @@ public class GoalGroupService {
             //     }
             // }
     
+
+            GoalGroupSimplifiedResponse response = GoalGroupSimplifiedResponse.from(targetGoalGroup);
+            log.debug(String.format("Answered call `PATCH /api/goalGroup/%d/%d` successfully with %s", userId, goalGroupId, response.toString()));
+
             return ResponseEntity.status(HttpStatus.OK)
-                .body(Response.setSuccess("목표 그룹 수정 완료!", "GoalGroup/update: Successful", GoalGroupSimplifiedResponse.from(targetGoalGroup)));
+                .body(Response.setSuccess("목표 그룹 수정 완료!", "GoalGroup/update: Successful", response));
         }
         catch(Exception e)
         {
@@ -227,6 +248,9 @@ public class GoalGroupService {
     {
         try
         {
+            log.debug(String.format("Received call `DELETE /api/goalGroup/%d/%d`", userId, goalGroupId));
+
+
             User targetUser = userRepository.findById(userId).orElse(null);
             GoalGroup targetGoalGroup = goalGroupRepository.findById(goalGroupId).orElse(null);
     
@@ -245,6 +269,9 @@ public class GoalGroupService {
             // for(Goal goal: targetGoalGroup.getGoals())
             //     targetGoalGroup.removeGoal(goal);
             targetUser.removeGoalGroup(targetGoalGroup);
+
+
+            log.debug(String.format("Answered call `DELETE /api/goalGroup/%d/%d` successfully", userId, goalGroupId));
 
             return ResponseEntity.status(HttpStatus.OK)
                 .body(Response.setSuccess("목표 그룹 삭제 완료!", "GoalGroup/remove: Successful", null));

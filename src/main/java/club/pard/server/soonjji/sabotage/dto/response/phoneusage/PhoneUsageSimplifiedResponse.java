@@ -6,9 +6,11 @@ import club.pard.server.soonjji.sabotage.entity.phoneusage.PhoneUsage;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 @Schema(description = "사용 시간에서 User 정보를 간소화한 Response")
 @Getter
+@ToString
 @RequiredArgsConstructor
 public class PhoneUsageSimplifiedResponse {
     @Schema(description = "사용 시간 ID")

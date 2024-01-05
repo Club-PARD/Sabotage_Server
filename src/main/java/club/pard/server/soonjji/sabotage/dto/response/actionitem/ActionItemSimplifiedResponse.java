@@ -4,9 +4,11 @@ import club.pard.server.soonjji.sabotage.entity.actionitem.ActionItem;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 @Schema(description = "ActionItem에서 User 정보를 간소화한 Response")
 @Getter
+@ToString
 @RequiredArgsConstructor
 public class ActionItemSimplifiedResponse {
     @Schema(description = "Action Item의 ID")

@@ -5,9 +5,11 @@ import java.sql.Date;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 @Schema(description = "전날 - 당일 간 사용 시간 비교 시 받게 되는 Response")
 @Getter
+@ToString
 @RequiredArgsConstructor
 public class PhoneUsageComparisonDailyResponse {
     @Schema(description = "사용 시간 기록 소유자의 사용자 ID 번호")

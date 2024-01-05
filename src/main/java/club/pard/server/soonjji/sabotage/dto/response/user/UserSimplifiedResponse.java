@@ -4,9 +4,11 @@ import club.pard.server.soonjji.sabotage.entity.user.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 @Schema(description = "User에서 Device ID를 제외하고 사용자 ID 번호와 별명을 가져오게 하는 Response")
 @Getter
+@ToString
 @RequiredArgsConstructor
 public class UserSimplifiedResponse {
     @Schema(description = "사용자 ID 번호")

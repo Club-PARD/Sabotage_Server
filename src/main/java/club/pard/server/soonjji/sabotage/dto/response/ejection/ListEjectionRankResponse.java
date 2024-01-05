@@ -5,9 +5,11 @@ import java.util.List;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 @Schema(description = "당일 탈출 횟수 순위 정보가 담아져 있는 Response")
 @Getter
+@ToString
 @RequiredArgsConstructor
 public class ListEjectionRankResponse {
     @Schema(description = "탈출 순위를 조회하는 사용자의 ID 번호")

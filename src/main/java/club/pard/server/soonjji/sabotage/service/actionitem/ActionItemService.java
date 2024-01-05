@@ -18,7 +18,9 @@ import club.pard.server.soonjji.sabotage.entity.user.User;
 import club.pard.server.soonjji.sabotage.repository.actionitem.ActionItemRepository;
 import club.pard.server.soonjji.sabotage.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ActionItemService {
@@ -30,6 +32,9 @@ public class ActionItemService {
     {
         try
         {
+            log.debug(String.format("Received call `POST /api/actionItem/%d` with %s", userId, request.toString()));
+
+            
             User targetUser = userRepository.findById(userId).orElse(null);
             if(targetUser == null)
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -57,8 +62,12 @@ public class ActionItemService {
             targetUser.addActionItem(newActionItem);
             actionItemRepository.save(newActionItem);
 
+
+            ActionItemSimplifiedResponse response = ActionItemSimplifiedResponse.from(newActionItem);
+            log.debug(String.format("Answered call `POST /api/actionItem/%d` successfully with %s", userId, response.toString()));
+
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(Response.setSuccess("Action Item 추가 완료!", "ActionItem/add: Successful", ActionItemSimplifiedResponse.from(newActionItem)));
+                    .body(Response.setSuccess("Action Item 추가 완료!", "ActionItem/add: Successful", response));
         }
         catch(Exception e)
         {
@@ -73,6 +82,9 @@ public class ActionItemService {
     {
         try
         {
+            log.debug(String.format("Received call `GET /api/actionItem/%d/all`", userId));
+
+
             User targetUser = userRepository.findById(userId).orElse(null);
             if(targetUser == null)
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -82,12 +94,14 @@ public class ActionItemService {
             if(items == null)
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Response.setFailure("Action Item 리스트가 존재하지 않아요!", "ActionItem/list: Action Item list is null"));
-            
+
+                    
             List<ActionItemSimplifiedResponse> itemsSimplified = new ArrayList<>();
             items.forEach((item) -> {
                 itemsSimplified.add(ActionItemSimplifiedResponse.from(item));
             });
 
+            log.debug(String.format("Answered call `GET /api/actionItem/%d/all` successfully", userId));
             return ResponseEntity.status(HttpStatus.OK)
                     .body(Response.setSuccess("Action Item 목록 조회 완료!", "ActionItem/list: Successful", itemsSimplified));
         }
@@ -104,6 +118,9 @@ public class ActionItemService {
     {
         try
         {
+            log.debug(String.format("Received call `GET /api/actionItem/expose/%d`", userId));
+
+
             if(!userRepository.existsById(userId))
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Response.setFailure("사용자가 존재하지 않아요!", "ActionItem/expose: Target User does not exist"));
@@ -117,8 +134,13 @@ public class ActionItemService {
             Random rng = new Random();
             ActionItem targetActionItem = actionItems.get(rng.nextInt(actionItems.size()));
             // targetActionItem.setExposureCount(targetActionItem.getExposureCount() + 1);
+
+
+            ActionItemSimplifiedResponse response = ActionItemSimplifiedResponse.from(targetActionItem);
+            log.debug(String.format("Answered call `GET /api/actionItem/expose/%d` successfully with %s", userId, response.toString()));
+
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(Response.setSuccess("Action Item 가져오기 완료!", "ActionItem/expose: successful", ActionItemSimplifiedResponse.from(targetActionItem)));
+                    .body(Response.setSuccess("Action Item 가져오기 완료!", "ActionItem/expose: successful", response));
         }
         catch(Exception e)
         {
@@ -133,6 +155,9 @@ public class ActionItemService {
     {   
         try
         {
+            log.debug(String.format("Received call `PATCH /api/actionItem/%d/%d` with %s", userId, itemId, request.toString()));
+
+
             User targetUser = userRepository.findById(userId).orElse(null);
             ActionItem targetActionItem = actionItemRepository.findById(itemId).orElse(null);
 
@@ -157,8 +182,12 @@ public class ActionItemService {
             targetActionItem.setCategory(newCategory);
             targetActionItem.setContent(newContent);
 
+
+            ActionItemSimplifiedResponse response = ActionItemSimplifiedResponse.from(targetActionItem);
+            log.debug(String.format("Answered call `PATCH /api/actionItem/%d/%d` successfully with %s", userId, itemId, response.toString()));
+
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(Response.setSuccess("Action Item 수정 완료!", "ActionItem/update: successful", ActionItemSimplifiedResponse.from(targetActionItem)));
+                    .body(Response.setSuccess("Action Item 수정 완료!", "ActionItem/update: successful", response));
         }
         catch(Exception e)
         {
@@ -173,6 +202,9 @@ public class ActionItemService {
     {
         try
         {
+            log.debug(String.format("Received call `DELETE /api/actionItem/%d/%d`", userId, itemId));
+
+
             User targetUser = userRepository.findById(userId).orElse(null);
             ActionItem targetActionItem = actionItemRepository.findById(itemId).orElse(null);
 
@@ -187,6 +219,10 @@ public class ActionItemService {
                     .body(Response.setFailure("해당 사용자가 해당 Action Item을 소유하지 않아요!", "ActionItem/remove: Target Action Item not owned by target User"));
 
             targetUser.removeActionItem(targetActionItem);
+
+
+            log.debug(String.format("Answered call `DELETE /api/actionItem/%d/%d` successfully", userId, itemId));
+
             return ResponseEntity.status(HttpStatus.OK)
                     .body(Response.setSuccess("Action Item 삭제 완료!", "ActionItem/remove: successful", null));
         }

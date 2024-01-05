@@ -5,10 +5,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Schema(description = "목표 그룹에서 User 정보를 간소화한 Response")
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 public class GoalGroupSimplifiedResponse {
     @Schema(description = "목표 그룹 ID")

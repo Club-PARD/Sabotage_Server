@@ -3,9 +3,11 @@ package club.pard.server.soonjji.sabotage.dto.response.ejection;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 @Schema(description = "당일 탈출 횟수 순위 정보가 담아져 있는 Response")
 @Getter
+@ToString
 @RequiredArgsConstructor
 public class EjectionRankResponse {
     @Schema(description = "탈출 기록 순위 번호")

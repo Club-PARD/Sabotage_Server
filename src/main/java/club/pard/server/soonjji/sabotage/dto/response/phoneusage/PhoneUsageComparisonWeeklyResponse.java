@@ -6,9 +6,11 @@ import java.util.List;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 
 @Schema(description = "당일 기준으로 한 주(~당일까지) 동안 사용 시간 비교 시 받게 되는 Response")
 @Getter
+@ToString
 @AllArgsConstructor
 public class PhoneUsageComparisonWeeklyResponse {
     @Schema(description = "사용 시간 기록 소유자의 사용자 ID 번호")

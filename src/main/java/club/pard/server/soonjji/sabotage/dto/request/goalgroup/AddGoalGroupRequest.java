@@ -6,9 +6,11 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Schema(description = "목표 그룹 추가 시 보내는 요청 내용")
 @Getter
+@ToString
 @NoArgsConstructor
 public class AddGoalGroupRequest {
     @Schema(description = "목표 그룹 이름, null이거나 비어있을 수 없음")

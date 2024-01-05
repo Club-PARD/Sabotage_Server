@@ -30,8 +30,9 @@ public class UserService {
     {
         try
         {
-            log.debug("POST /api/user request with " + request.toString());
+            log.debug(String.format("Received call `POST /api/user` with %s", request.toString()));
 
+            
             String deviceId = request.getDeviceId();
             if(userRepository.existsByDeviceId(deviceId))
                 return ResponseEntity.status(HttpStatus.OK)
@@ -53,8 +54,9 @@ public class UserService {
             User newUser = User.builder().deviceId(deviceId).nickname(newNickname).build();
             userRepository.save(newUser);
 
+
             UserSimplifiedResponse response = UserSimplifiedResponse.from(newUser);
-            log.debug("`POST /api/user` respond with " + response.toString());
+            log.debug(String.format("Answered call `POST /api/user` successfully with %s", response.toString()));
 
             return ResponseEntity.status(HttpStatus.OK)
                 .body(Response.setSuccess("사용자 등록 완료!", "User/register: new User added", response));
@@ -72,15 +74,18 @@ public class UserService {
     {
         try
         {
-            log.debug(String.format("`GET /api/user/%d` request", userId));
+            log.debug(String.format("Received call `GET /api/user/%d`", userId));
+
 
             User targetUser = userRepository.findById(userId).orElse(null);
             if(targetUser == null)
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Response.setFailure("해당 사용자가 존재하지 않아요!", "User/list: Target User not existent"));
 
+
             UserSimplifiedResponse response = UserSimplifiedResponse.from(targetUser);
-            log.debug("`GET /api/user/%d` respond with %s", userId, response.toString());
+            log.debug("Answered call `GET /api/user/%d` successfully with %s", userId, response.toString());
+
             return ResponseEntity.status(HttpStatus.OK)
                 .body(Response.setSuccess("사용자 조회 완료!", "User/list: successful", response));
         }
@@ -97,7 +102,8 @@ public class UserService {
     {
         try
         {
-            log.debug(String.format("`DELETE /api/user/%d` request", userId));
+            log.debug(String.format("Received call `DELETE /api/user/%d`", userId));
+
 
             User targetUser = userRepository.findById(userId).orElse(null);
             if(targetUser == null)
@@ -106,6 +112,8 @@ public class UserService {
 
             Timestamp timeDeactivated = new Timestamp(System.currentTimeMillis());
             targetUser.setDateDeactivated(timeDeactivated);
+
+            log.debug(String.format("Answered call `DELETE /api/user/%d` successfully", userId));
 
             return ResponseEntity.status(HttpStatus.OK)
                 .body(Response.setSuccess("비활성화 완료!", "User/deactivate: User deactivation time set", timeDeactivated));

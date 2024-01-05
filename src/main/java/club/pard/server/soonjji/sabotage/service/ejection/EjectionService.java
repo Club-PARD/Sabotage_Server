@@ -18,7 +18,9 @@ import club.pard.server.soonjji.sabotage.repository.ejection.EjectionRank;
 import club.pard.server.soonjji.sabotage.repository.ejection.EjectionRepository;
 import club.pard.server.soonjji.sabotage.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EjectionService {
@@ -30,6 +32,9 @@ public class EjectionService {
     {
         try
         {
+            log.debug(String.format("Received call `POST /api/ejection/%d`", userId));
+
+
             User targetUser = userRepository.findById(userId).orElse(null);
             if(targetUser == null)
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -39,6 +44,9 @@ public class EjectionService {
             Ejection newEjection = new Ejection();
             ejectionRepository.save(newEjection);
             targetUser.addEjection(newEjection);
+
+
+            log.debug(String.format("Answered call `POST /api/ejection/%d` successfully", userId));
 
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(Response.setSuccess("탈출 추가 완료!", "Ejection/add: Successful", null));
@@ -56,6 +64,9 @@ public class EjectionService {
     {
         try
         {
+            log.debug(String.format("Received call `GET /api/ejection/%d`", userId));
+
+
             List<EjectionRank> rankRaw = ejectionRepository.getRankList(targetTimestamp);
             List<EjectionRankResponse> rank = new ArrayList<>();
             Long targetUserRank = null;
@@ -80,10 +91,15 @@ public class EjectionService {
                 }
                 else if(targetUserRank != null) break;
             }
+
             EjectionRankResponse myRank = EjectionRankResponse.of(targetUserRank, targetUserNickname, targetUserEjectionCount);
 
+
+            ListEjectionRankResponse response = ListEjectionRankResponse.of(userId, rank, myRank);
+            log.debug(String.format("Answered call `GET /api/ejection/%d` successfully with %s", userId, response.toString()));
+
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(Response.setSuccess("탈출 순위표 조회 완료!", "Ejection/getRank: Successful", ListEjectionRankResponse.of(userId, rank, myRank)));
+                    .body(Response.setSuccess("탈출 순위표 조회 완료!", "Ejection/getRank: Successful", response));
         }
         catch(Exception e)
         {
@@ -98,11 +114,17 @@ public class EjectionService {
     {
         try
         {
+            log.debug(String.format("Received call `GET /api/ejection/%d/today`", userId));
+
+
             if(!userRepository.existsById(userId))
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Response.setFailure("해당 사용자가 존재하지 않아요!", "Ejection/getTodays: Target User not existent"));
             Long ejections = ejectionRepository.countByUserIdAndTimeOccurredGreaterThanEqual(userId, targetTimestamp);
     
+            
+            log.debug(String.format("Answered call `GET /api/ejection/%d/today` successfully with %d", userId, ejections));
+
             return ResponseEntity.status(HttpStatus.OK)
                     .body(Response.setSuccess("탈출 목록 조회 완료!", "Ejection/getTodays: Successful", ejections));
         }

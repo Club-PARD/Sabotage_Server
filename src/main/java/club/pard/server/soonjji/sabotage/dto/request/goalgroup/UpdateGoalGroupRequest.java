@@ -4,14 +4,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Schema(description = "목표 그룹 수정 시 보내는 요청 내용")
-@Data
+@Getter
+@ToString
 @NoArgsConstructor
-@AllArgsConstructor
 public class UpdateGoalGroupRequest {
     @Schema(description = "수정할 목표 그룹의 새 이름. null이거나 비어있을 수 없음")
     @NotBlank(message = "Title should not be null or empty")

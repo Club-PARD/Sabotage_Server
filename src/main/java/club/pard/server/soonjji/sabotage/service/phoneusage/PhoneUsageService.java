@@ -20,7 +20,9 @@ import club.pard.server.soonjji.sabotage.entity.user.User;
 import club.pard.server.soonjji.sabotage.repository.phoneusage.PhoneUsageRepository;
 import club.pard.server.soonjji.sabotage.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PhoneUsageService {
@@ -32,6 +34,9 @@ public class PhoneUsageService {
     {
         try
         {
+            log.debug(String.format("Received call `PUT /api/phoneUsage/%d` with %s", userId, request.toString()));
+
+
             User targetUser = userRepository.findById(userId).orElse(null);
             if(targetUser == null)
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -57,8 +62,12 @@ public class PhoneUsageService {
             else
                 phoneUsage.setTimeUsed(timeUsed);
 
+            
+            PhoneUsageSimplifiedResponse response = PhoneUsageSimplifiedResponse.from(phoneUsage);
+            log.debug(String.format("Answered call `PUT /api/phoneUsage/%d` successfully with %s", userId, response.toString()));
+
             return ResponseEntity.status(HttpStatus.OK)
-                .body(Response.setSuccess("사용 기록 추가 완료!", "PhoneUsage/add: Successful", PhoneUsageSimplifiedResponse.from(phoneUsage)));
+                .body(Response.setSuccess("사용 기록 추가 완료!", "PhoneUsage/add: Successful", response));
 
         }
         catch(Exception e)
@@ -74,6 +83,9 @@ public class PhoneUsageService {
     {
         try
         {
+            log.debug(String.format("Received call `GET /api/phoneUsage/%d/daily` with date %s", userId, targetDateString));
+
+
             Date targetDate = Date.valueOf(targetDateString);
             
             User targetUser = userRepository.findById(userId).orElse(null);
@@ -96,8 +108,12 @@ public class PhoneUsageService {
 
             Long timeUsedDifferenceRate = Math.round((timeUsedToday - timeUsedYesterday) / timeUsedYesterday.doubleValue() * 100);
 
+
+            PhoneUsageComparisonDailyResponse response = new PhoneUsageComparisonDailyResponse(userId, targetDate, timeUsedYesterday, timeUsedToday, timeUsedDifferenceRate);
+            log.debug(String.format("Answered call `GET /api/phoneUsage/%d/daily` at date %s successfully with %s", userId, targetDateString, response.toString()));
+
             return ResponseEntity.status(HttpStatus.OK)
-                .body(Response.setSuccess("어제 오늘 사용 시간 조회 성공!", "PHoneUsage/getAnalysisDaily: Successful", new PhoneUsageComparisonDailyResponse(userId, targetDate, timeUsedYesterday, timeUsedToday, timeUsedDifferenceRate)));
+                .body(Response.setSuccess("어제 오늘 사용 시간 조회 성공!", "PHoneUsage/getAnalysisDaily: Successful", response));
         }
         catch(Exception e)
         {
@@ -112,6 +128,9 @@ public class PhoneUsageService {
     {
         try
         {
+            log.debug(String.format("Received call `GET /api/phoneUsage/%d/weekly` with date %s", userId, targetDateString));
+
+
             Date targetDate = Date.valueOf(targetDateString);
 
             User targetUser = userRepository.findById(userId).orElse(null);
@@ -133,8 +152,12 @@ public class PhoneUsageService {
                 timeUsedWeekly.add((usageWeekly == null) ? 0 : usageWeekly.getTimeUsed());
             }
 
+
+            PhoneUsageComparisonWeeklyResponse response = new PhoneUsageComparisonWeeklyResponse(userId, targetDate, timeUsedWeekly);
+            log.debug(String.format("Answered call `GET /api/phoneUsage/%d/weekly` at date %s successfully with %s", userId, targetDateString, response.toString()));
+
             return ResponseEntity.status(HttpStatus.OK)
-                .body(Response.setSuccess("주간 사용 시간 조회 성공!", "PhoneUsage/getAnalysisWeekly: Successful", new PhoneUsageComparisonWeeklyResponse(userId, targetDate, timeUsedWeekly)));
+                .body(Response.setSuccess("주간 사용 시간 조회 성공!", "PhoneUsage/getAnalysisWeekly: Successful", response));
         }
         catch(Exception e)
         {
