@@ -14,7 +14,9 @@ import club.pard.server.soonjji.sabotage.dto.response.user.UserSimplifiedRespons
 import club.pard.server.soonjji.sabotage.entity.user.User;
 import club.pard.server.soonjji.sabotage.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -28,6 +30,8 @@ public class UserService {
     {
         try
         {
+            log.debug("POST /api/user request with " + request.toString());
+
             String deviceId = request.getDeviceId();
             if(userRepository.existsByDeviceId(deviceId))
                 return ResponseEntity.status(HttpStatus.OK)
@@ -49,8 +53,11 @@ public class UserService {
             User newUser = User.builder().deviceId(deviceId).nickname(newNickname).build();
             userRepository.save(newUser);
 
+            UserSimplifiedResponse response = UserSimplifiedResponse.from(newUser);
+            log.debug("`POST /api/user` respond with " + response.toString());
+
             return ResponseEntity.status(HttpStatus.OK)
-                .body(Response.setSuccess("사용자 등록 완료!", "User/register: new User added", UserSimplifiedResponse.from(newUser)));
+                .body(Response.setSuccess("사용자 등록 완료!", "User/register: new User added", response));
         }
         catch(Exception e)
         {
@@ -65,13 +72,17 @@ public class UserService {
     {
         try
         {
+            log.debug(String.format("`GET /api/user/%d` request", userId));
+
             User targetUser = userRepository.findById(userId).orElse(null);
             if(targetUser == null)
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Response.setFailure("해당 사용자가 존재하지 않아요!", "User/list: Target User not existent"));
-            
+
+            UserSimplifiedResponse response = UserSimplifiedResponse.from(targetUser);
+            log.debug("`GET /api/user/%d` respond with %s", userId, response.toString());
             return ResponseEntity.status(HttpStatus.OK)
-                .body(Response.setSuccess("사용자 조회 완료!", "User/list: successful", UserSimplifiedResponse.from(targetUser)));
+                .body(Response.setSuccess("사용자 조회 완료!", "User/list: successful", response));
         }
         catch(Exception e)
         {
@@ -85,7 +96,9 @@ public class UserService {
     public ResponseEntity<Response<Timestamp>> deactivate(Long userId)
     {
         try
-        {   
+        {
+            log.debug(String.format("`DELETE /api/user/%d` request", userId));
+
             User targetUser = userRepository.findById(userId).orElse(null);
             if(targetUser == null)
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)

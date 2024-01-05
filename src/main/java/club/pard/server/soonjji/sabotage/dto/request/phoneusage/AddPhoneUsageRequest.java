@@ -8,9 +8,11 @@ import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Schema(description = "사용 시간 기록 시 보내는 요청 내용")
 @Getter
+@ToString
 @NoArgsConstructor
 public class AddPhoneUsageRequest {
     @Schema(description = "추가할 사용 시간의 날짜. null이거나 미래의 날짜일 수 없음")
