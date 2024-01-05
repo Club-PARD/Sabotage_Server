@@ -2,6 +2,7 @@ package club.pard.server.soonjji.sabotage.service.actionitem;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -98,7 +99,7 @@ public class ActionItemService {
         }
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ResponseEntity<Response<ActionItemSimplifiedResponse>> expose(Long userId)
     {
         try
@@ -106,13 +107,16 @@ public class ActionItemService {
             if(!userRepository.existsById(userId))
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Response.setFailure("사용자가 존재하지 않아요!", "ActionItem/expose: Target User does not exist"));
-
-            ActionItem targetActionItem = actionItemRepository.findFirst1ByUserIdOrderByExposureCountAsc(userId);
-            if(targetActionItem == null)
+                    
+            List<ActionItem> actionItems = actionItemRepository.findAllByUserIdOrderByIdAsc(userId);
+                
+            if(actionItems == null || actionItems.isEmpty())
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Response.setFailure("Action Item이 존재하지 않아요!", "ActionItem/expose: Action Item is null")); // Expected NOT to be stuck here when the list is empty(not null)
-            
-            targetActionItem.setExposureCount(targetActionItem.getExposureCount() + 1);
+                
+            Random rng = new Random();
+            ActionItem targetActionItem = actionItems.get(rng.nextInt(actionItems.size()));
+            // targetActionItem.setExposureCount(targetActionItem.getExposureCount() + 1);
             return ResponseEntity.status(HttpStatus.OK)
                     .body(Response.setSuccess("Action Item 가져오기 완료!", "ActionItem/expose: successful", ActionItemSimplifiedResponse.from(targetActionItem)));
         }

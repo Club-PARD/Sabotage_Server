@@ -66,7 +66,7 @@ public class ActionItemController {
         @ApiResponse(responseCode = "404", description = "Not Found: Path Variable로 명시한 User가 존재하지 않거나 User 안에 Action Item 리스트가 (비어있는 게 아니라 아예) 존재하지 않을 경우 발생함", content = @Content),
         @ApiResponse(responseCode = "500", description = "Internal Server Error: 서버에 다루지 못한 Exception이 발생, 예외 스택이 출력될 것이니 서버 관리자가 확인해야 함", content = @Content)
     })
-    @PatchMapping("/expose/{userId}")
+    @GetMapping("/expose/{userId}")
     public ResponseEntity<Response<ActionItemSimplifiedResponse>> expose(@Parameter(description = "Action Item을 배너로 노출시킬 대상 사용자의 ID", required = true) @PathVariable Long userId)
     {
         return actionItemService.expose(userId);
