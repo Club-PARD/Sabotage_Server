@@ -1,11 +1,28 @@
 <p align="center">
-    <img src="./assets/exit-startpage.png" />
+    <img src="./assets/exit-banner.png" />
     <img src="./assets/exit-logo.png" />
 </p>
 
 
 # `EXIT`/server (구 `Sabotage`)
 “스마트폰 이용 시간을 유익하게 변화시킬 수 있는 스크린타임 서비스” - `EXIT`의 서버 쪽 `repository`
+
+## 주요 기능
+<table>
+    <tr>
+        <td align="center"><img src="./assets/action_item.png" width="50%" /></td>
+        <td align="center"><img src="./assets/goal_group.png" width="50%" /></td>
+        <td align="center"><img src="./assets/analysis.png" width="50%" /> <br></td>
+    </tr>
+    <tr>
+        <td align="center">목표 습관 작성</td>
+        <td align="center">제한 그룹 작성</td>
+        <td align="center">스크린타임 시간 분석</td>
+    </tr>
+</table><br>
+
+---
+---
 
 # 코드 외부
 
